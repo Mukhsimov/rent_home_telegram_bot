@@ -47,8 +47,8 @@
 
     <dependency>
       <groupId>uz.pdp</groupId>
-      <artifactId>weatherProject</artifactId>
-      <version>1.2</version>
+      <artifactId>fileWriterAndLoader</artifactId>
+      <version>1.0</version>
     </dependency>
 
 

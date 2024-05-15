@@ -1,6 +1,7 @@
 package uz.pdp.frontend.manager;
 
 import com.pengrad.telegrambot.model.Update;
+import uz.pdp.frontend.enums.states.BaseState;
 import uz.pdp.frontend.handlers.BaseHandler;
 import uz.pdp.frontend.handlers.CallBackQueryHandler;
 import uz.pdp.frontend.handlers.MessageHandler;
@@ -8,6 +9,7 @@ import uz.pdp.frontend.handlers.MessageHandler;
 public class UpdateManager {
     private final BaseHandler messageHandler;
     private final BaseHandler callBackQuery;
+    private BaseState curState = BaseState.REGISTER_STATE;
 
     public UpdateManager() {
         callBackQuery = new CallBackQueryHandler();
