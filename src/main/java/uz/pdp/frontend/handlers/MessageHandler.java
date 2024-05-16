@@ -23,16 +23,18 @@ public class MessageHandler extends BaseHandler {
         Message message = update.message();
         User from = message.from();
         String text = message.text();
+        String send = null;
         curUser = getOrCreateUser(from);
         if (text.equals("/start")) {
+            MyUser user = null;
             if(myUsers!=null) {
                 for (MyUser myUser : myUsers) {
                     if (myUser.getId().equals(curUser.getId())) {
-                        curUser = myUser;
+                        user = myUser;
                     }
                 }
             }
-            if (curUser != null) {
+            if (user != null) {
                 mainMenyu();
                 curUser.setState(String.valueOf(BaseState.REGISTER_STATE));
                 curUser.setState(String.valueOf(RegisterStates.REGISTER_STATE));
@@ -73,5 +75,6 @@ public class MessageHandler extends BaseHandler {
         List<MyUser> users1 = new ArrayList<>();
         users1.add(user);
         users.fileWrite(Path.of("src/main/resources/users.json"), users1);
+        bot.execute(sendMessage);
     }
 }
