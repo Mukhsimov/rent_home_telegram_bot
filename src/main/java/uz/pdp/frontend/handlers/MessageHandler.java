@@ -12,6 +12,7 @@ import uz.pdp.frontend.models.MyUser;
 import uz.pdp.frontend.utills.ButtonCreator;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageHandler extends BaseHandler {
@@ -22,21 +23,21 @@ public class MessageHandler extends BaseHandler {
         Message message = update.message();
         User from = message.from();
         String text = message.text();
-        String send = null;
-        curUser = new MyUser(from.id(), from.firstName(), from.username(), null, null, null);
+        curUser = getOrCreateUser(from);
         if (text.equals("/start")) {
-            MyUser user = null;
-            for (MyUser myUser : myUsers) {
-                if (myUser.getId().equals(curUser.getId())) {
-                    user = myUser;
+            if(myUsers!=null) {
+                for (MyUser myUser : myUsers) {
+                    if (myUser.getId().equals(curUser.getId())) {
+                        curUser = myUser;
+                    }
                 }
             }
-            if (user != null) {
-                register(user);
+            if (curUser != null) {
+                mainMenyu();
                 curUser.setState(String.valueOf(BaseState.REGISTER_STATE));
                 curUser.setState(String.valueOf(RegisterStates.REGISTER_STATE));
             } else {
-                mainMenyu();
+                register(curUser);
                 curUser.setState(String.valueOf(BaseState.REGISTER_STATE));
                 curUser.setState(String.valueOf(RegisterStates.MAIN_MENYU));
             }
@@ -56,8 +57,8 @@ public class MessageHandler extends BaseHandler {
                 }
         };
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(button);
-        SendMessage sendMessage = new SendMessage(curUser.getId(), "Main menyu"+"\n"+markup);
-        bot.execute(sendMessage);
+        SendMessage sendMessage1 = new SendMessage(curUser.getId(), "Main menyu"+"\n"+markup);
+        bot.execute(sendMessage1);
     }
 
     private void register(MyUser user) {
@@ -69,6 +70,8 @@ public class MessageHandler extends BaseHandler {
         };
         ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(button).oneTimeKeyboard(true).resizeKeyboard(true);
         sendMessage.replyMarkup(markup);
-        users.fileWrite(Path.of("src/main/resources/users.json"), (List<MyUser>) user);
+        List<MyUser> users1 = new ArrayList<>();
+        users1.add(user);
+        users.fileWrite(Path.of("src/main/resources/users.json"), users1);
     }
 }

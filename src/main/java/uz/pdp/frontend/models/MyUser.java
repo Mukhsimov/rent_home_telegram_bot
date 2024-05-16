@@ -9,8 +9,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
+@Builder
 public class MyUser {
     private Long id;
     private String name;
