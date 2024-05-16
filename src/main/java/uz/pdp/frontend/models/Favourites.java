@@ -1,16 +1,13 @@
 package uz.pdp.frontend.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Getter
 public class Favourites {
     private UUID userId;
     private UUID homeId;
