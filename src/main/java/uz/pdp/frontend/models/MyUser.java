@@ -16,5 +16,5 @@ public class MyUser {
     private String userName;
     private String baseState;
     private String state;
-    private Contact contact;
+    private String contact;
 }

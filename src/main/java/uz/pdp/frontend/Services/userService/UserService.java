@@ -47,11 +47,12 @@ public class UserService implements BaseService<MyUser> {
 
 
         for (int i = 0; i < users.size(); i++) {
-            if (Objects.equals(users.get(i).getId(), id)) {
+            MyUser user = users.get(i);
+            if (Objects.equals(user.getId(), id)) {
                 return users.get(i);
             }
         }
-        throw new RuntimeException(id + ": User not found");
+        return null;
     }
 
 
