@@ -4,18 +4,6 @@
   <groupId>uz.pdp</groupId>
   <artifactId>rent_home_telegram_bot</artifactId>
   <packaging>jar</packaging>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>15</source>
-          <target>15</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <version>1.0.0</version>
   <name>rent_home_telegram_bot</name>
   <url>https://maven.apache.org</url>

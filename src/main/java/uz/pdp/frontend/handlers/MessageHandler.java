@@ -19,6 +19,7 @@ public class MessageHandler extends BaseHandler {
         String text = message.text();
         String send = null;
         if(text.equals("/start")){
+            if(curUser.)
             send = "---SEND CONTACT---";
         }else if(){
 
