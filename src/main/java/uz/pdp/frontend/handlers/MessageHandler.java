@@ -21,7 +21,6 @@ public class MessageHandler extends BaseHandler {
         Message message = update.message();
         User from = message.from();
         String text = message.text();
-        String send = null;
         curUser = getOrCreateUser(from);
         if (text.equals("/start")) {
             MyUser user = null;
@@ -40,6 +39,7 @@ public class MessageHandler extends BaseHandler {
                 register(curUser);
                 curUser.setState(String.valueOf(BaseState.REGISTER_STATE));
                 curUser.setState(String.valueOf(RegisterStates.MAIN_MENYU));
+                mainMenyu();
             }
         }
         /*else if () {
@@ -50,7 +50,14 @@ public class MessageHandler extends BaseHandler {
     }
 
     private void mainMenyu() {
-        InlineKeyboardButton[][] button = {
+        SendMessage sendMessage = new SendMessage(curUser.getId(), "MAIN MENYU");
+        InlineKeyboardButton[][] button1 = new InlineKeyboardButton[0][2];
+        button1[0][0] = new InlineKeyboardButton("rent out home").callbackData("rentOutHome");
+        button1[0][1] = new InlineKeyboardButton("rent home").callbackData("rentHome");
+        InlineKeyboardMarkup markup1 = new InlineKeyboardMarkup(button1);
+        sendMessage.replyMarkup(markup1);
+        bot.execute(sendMessage);
+        /*InlineKeyboardButton[][] button = {
                 {
                         new InlineKeyboardButton("rent out home").callbackData("rentOutHome"),
                         new InlineKeyboardButton("rent home").callbackData("rentHome"),
@@ -59,6 +66,7 @@ public class MessageHandler extends BaseHandler {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(button);
         SendMessage sendMessage1 = new SendMessage(curUser.getId(), "Main menyu"+"\n"+markup);
         bot.execute(sendMessage1);
+         */
     }
 
     private void register(MyUser user) {

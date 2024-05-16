@@ -14,11 +14,11 @@ public abstract class BaseHandler {
     protected TelegramBot bot;
     protected MyUser curUser;
     protected FileWriterAndLoader<MyUser> users = new FileWriterAndLoader<>();
-    protected List<MyUser> myUsers = users.fileLoader(Path.of("src/main/resources/users.json"));
 
     public BaseHandler() {
         this.bot = new TelegramBot(App.BOT_TOKEN);
     }
+    protected List<MyUser> myUsers = users.fileLoader(Path.of("src/main/resources/users.json"));
 
     public abstract void handle(Update update);
 
