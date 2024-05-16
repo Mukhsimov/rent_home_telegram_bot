@@ -5,11 +5,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
-import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 import uz.pdp.frontend.enums.states.BaseState;
 import uz.pdp.frontend.enums.states.childsStates.RegisterStates;
 import uz.pdp.frontend.models.MyUser;
-import uz.pdp.frontend.utills.ButtonCreator;
 
 import java.nio.file.Path;
 import java.util.List;

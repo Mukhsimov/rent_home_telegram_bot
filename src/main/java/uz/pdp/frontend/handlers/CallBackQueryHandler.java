@@ -3,9 +3,13 @@ package uz.pdp.frontend.handlers;
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.frontend.enums.states.BaseState;
 import uz.pdp.frontend.enums.states.childsStates.RentOutState;
 import uz.pdp.frontend.enums.states.childsStates.RentState;
+import uz.pdp.frontend.models.Favourite;
+import uz.pdp.frontend.utills.ButtonCreator;
 
 public class CallBackQueryHandler extends BaseHandler {
     @Override
@@ -63,10 +67,24 @@ public class CallBackQueryHandler extends BaseHandler {
     }
 
     private void rentHomeState() {
+        ButtonCreator creator = new ButtonCreator();
         // search homes by filter
         // Favorites
+        String txt = "rent home";
+        String[][] callBackData = {{"SearchHome", "Favorites"}};
+
+        String[][] names = {{"Search home", "Favorites"}};
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData, txt);
+
+        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
+
+        sendMessage.replyMarkup(inlineKeyboardMarkup);
+
+        bot.execute(sendMessage);
 
     }
+
     private void rentOutState() {
         /*
          * add home
@@ -75,10 +93,27 @@ public class CallBackQueryHandler extends BaseHandler {
          * delete account
          * */
 
+        ButtonCreator creator = new ButtonCreator();
+        // search homes by filter
+        // Favorites
+        String txt = "rent out home";
+        String[][] callBackData = {{"addHome", "showHomes"},
+                {"deleteHome", "deleteAccount"}};
+
+        String[][] names = {{"add home", "show homes"},
+                {"delete Home", "delete account"}};
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData, txt);
+
+        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
+
+        sendMessage.replyMarkup(inlineKeyboardMarkup);
+
+        bot.execute(sendMessage);
+
     }
 
     private void favorites() {
-
     }
 
 

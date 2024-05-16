@@ -8,7 +8,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Favourites {
+public class Favourite {
     private UUID userId;
     private UUID homeId;
 }
