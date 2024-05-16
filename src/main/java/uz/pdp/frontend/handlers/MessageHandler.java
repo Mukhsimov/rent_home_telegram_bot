@@ -23,6 +23,7 @@ public class MessageHandler extends BaseHandler {
         User from = message.from();
         String text = message.text();
         String send = null;
+        curUser = new MyUser(from.id(), from.firstName(), from.username(), null, null, null);
         if (text.equals("/start")) {
             MyUser user = null;
             for (MyUser myUser : myUsers) {
