@@ -43,7 +43,7 @@ public class FavoritesService implements BaseService<Favourite> {
     public Favourite get(long id) {
         List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
         for (Favourite favourite : favourites) {
-            if (favourite.getId().equals(id)){
+            if (favourite.getId().equals(id)) {
                 return favourite;
             }
         }
@@ -52,6 +52,13 @@ public class FavoritesService implements BaseService<Favourite> {
 
     @Override
     public void delete(long id) {
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        for (Favourite favourite : favourites) {
+            if (favourite.getId().equals(id)) {
+                favourites.remove(favourite);
+                return;
+            }
+        }
 
     }
 }

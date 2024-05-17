@@ -9,7 +9,7 @@ import uz.pdp.backend.handlers.MessageHandler;
 public class UpdateManager {
     private final BaseHandler messageHandler;
     private final BaseHandler callBackQuery;
-    private BaseState curState = BaseState.REGISTER_STATE;
+    // private BaseState curState = BaseState.REGISTER_STATE;
 
     public UpdateManager() {
         callBackQuery = new CallBackQueryHandler();

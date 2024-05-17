@@ -7,6 +7,7 @@ import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeService implements BaseService<Home> {
     private final FileWriterAndLoader<Home> loadAndWriter;
@@ -29,17 +30,24 @@ public class HomeService implements BaseService<Home> {
     public void update(Home home) {
         List<Home> homes = loadAndWriter.fileLoader(Home.class);
         for (int i = 0; i < homes.size(); i++) {
-
+            if (Objects.equals(homes.get(i).getId(), home.getId()) ){
+                homes.set(i, home);
+                return;
+            }
         }
     }
 
     @Override
     public Home get(long id) {
+        for (Home home : loadAndWriter.fileLoader(Home.class)) {
+            if (home.getId().equals(id)) return home;
+        }
         return null;
     }
 
     @Override
     public void delete(long id) {
-
+        List<Home> homes = loadAndWriter.fileLoader(Home.class);
+        homes.removeIf(home -> home.getId().equals(id));
     }
 }
