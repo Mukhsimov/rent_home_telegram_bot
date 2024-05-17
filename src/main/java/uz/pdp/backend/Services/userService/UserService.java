@@ -5,8 +5,6 @@ import uz.pdp.backend.statics.PathConstants;
 import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 import uz.pdp.backend.models.MyUser;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,24 +12,21 @@ public class UserService implements BaseService<MyUser> {
     private final FileWriterAndLoader<MyUser> fileWriterAndLoader;
 
     public UserService() {
-        fileWriterAndLoader = new FileWriterAndLoader<>();
+        fileWriterAndLoader = new FileWriterAndLoader<>(PathConstants.USERS_PATH);
     }
 
 
     @Override
     public void create(MyUser myUser) {
-        Path userPath = Path.of(PathConstants.USERS_PATH);
-        List<MyUser> users = fileWriterAndLoader.fileLoader(userPath);
+        List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
         users.add(myUser);
-        fileWriterAndLoader.fileWrite(userPath, users);
+        fileWriterAndLoader.fileWrite(users);
     }
 
 
     @Override
     public void update(MyUser myUser) {
-        Path usersPath = Path.of(PathConstants.USERS_PATH);
-        List<MyUser> users = fileWriterAndLoader.fileLoader(usersPath);
-
+        List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
 
         for (int i = 0; i < users.size(); i++) {
             if (Objects.equals(users.get(i).getId(), myUser.getId())) {
@@ -39,20 +34,17 @@ public class UserService implements BaseService<MyUser> {
                 return;
             }
         }
-        fileWriterAndLoader.fileWrite(usersPath, users);
+        fileWriterAndLoader.fileWrite(users);
     }
 
 
     @Override
     public MyUser get(long id) {
-        Path usersPath = Path.of(PathConstants.USERS_PATH);
-        List<MyUser> users = fileWriterAndLoader.fileLoader(usersPath);
+        List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
 
-
-        for (int i = 0; i < users.size(); i++) {
-            MyUser user = users.get(i);
+        for (MyUser user : users) {
             if (Objects.equals(user.getId(), id)) {
-                return users.get(i);
+                return user;
             }
         }
         return null;
@@ -61,9 +53,7 @@ public class UserService implements BaseService<MyUser> {
 
     @Override
     public void delete(long id) {
-        Path usersPath = Path.of(PathConstants.USERS_PATH);
-        List<MyUser> users = fileWriterAndLoader.fileLoader(usersPath);
-
+        List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
 
         boolean removed = users.removeIf((user) -> (Objects.equals(user.getId(), id)));
         if (removed) {
