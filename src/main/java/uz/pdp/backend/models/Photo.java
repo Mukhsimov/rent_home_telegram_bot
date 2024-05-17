@@ -12,6 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 public class Photo {
-    private UUID homeId;
+    private Long homeId;
     private String photoFieldId;
 }

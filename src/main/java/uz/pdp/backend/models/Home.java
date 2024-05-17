@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 public class Home {
-    private long id;
+    private Long id;
     private double price;
     private double square;
     private int roomCount;
