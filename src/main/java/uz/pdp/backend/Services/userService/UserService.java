@@ -36,10 +36,10 @@ public class UserService implements BaseService<MyUser> {
         for (int i = 0; i < users.size(); i++) {
             if (Objects.equals(users.get(i).getId(), myUser.getId())) {
                 users.set(i, myUser);
+                fileWriterAndLoader.fileWrite(usersPath, users);
                 return;
             }
         }
-        fileWriterAndLoader.fileWrite(usersPath, users);
     }
 
 

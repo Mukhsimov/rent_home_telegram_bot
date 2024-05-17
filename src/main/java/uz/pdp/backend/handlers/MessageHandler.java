@@ -42,11 +42,8 @@ public class MessageHandler extends BaseHandler {
 
 
     private void mainMenyu() {
-        ButtonCreator buttonCreator = new ButtonCreator();
-        String[][] massage = {new String[]{"rent out home"}, new String[]{"rent home"}};
-        String[][] callBack = {new String[]{"rentOutHome"}, new String[]{"rentHome"}};
-        InlineKeyboardMarkup markup = buttonCreator.inlineKeyboardMarkup(massage, callBack);
-        SendMessage sendMessage = new SendMessage(curUser.getId(), "Main menyu").replyMarkup(markup);
+
+        SendMessage sendMessage = messageMaker.mainMenyu(curUser);
         bot.execute(sendMessage);
     }
 
