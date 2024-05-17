@@ -5,7 +5,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.SendResponse;
 import uz.pdp.backend.Services.favorites.FavoritesService;
+import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.states.childsStates.RentOutState;
@@ -17,8 +19,14 @@ public class CallBackQueryHandler extends BaseHandler {
     public void handle(Update update) {
         CallbackQuery callbackQuery = update.callbackQuery();
         User from = callbackQuery.from();
+        curUser = getOrCreateUser(from);
+        super.update = update;
         String data = callbackQuery.data();
-
+        switch (BaseState.valueOf(curUser.getBaseState())){
+            case MAIN_STATE -> mainState() ;
+            case RENT_STATE -> rentState();
+            case RENT_OUT_STATE -> mainState();
+        }
         switch (data) {
 
             case "rentHome" -> {
@@ -80,6 +88,39 @@ public class CallBackQueryHandler extends BaseHandler {
                     case "RENT_STATE" ->{
                         curUser.setState(RentState.RENT_HOME.name());
                         rentHomeState();
+                    }
+                }
+            }
+        }
+    }
+
+    private void rentState() {
+        CallbackQuery callbackQuery = update.callbackQuery();
+        String data = callbackQuery.data();
+        RentState rentState = RentState.valueOf(curUser.getState());
+        switch (rentState ){
+            case SEARCH_HOME -> {
+                switch (data){
+                    case "Search home"->{
+
+                    }
+                    case "back"->{
+                        rentBackTo(null);
+                    }
+                }
+            }
+        }
+    }
+
+    private void mainState() {
+        CallbackQuery callbackQuery = update.callbackQuery();
+        String data = callbackQuery.data();
+        MainStates mainStates = MainStates.valueOf(curUser.getState());
+        switch (mainStates){
+            case MENYU_STATE -> {
+                switch (data){
+                    case "Search home"->{
+
                     }
                 }
             }
@@ -162,5 +203,32 @@ public class CallBackQueryHandler extends BaseHandler {
 
     }
 
+    private void rentBackTo( RentState rentState){
+
+        switch (rentState){
+            case RENT_HOME -> {
+                // send message rent home
+                curUser.setState(RentState.RENT_HOME.name());
+            }
+            case SEARCH_HOME -> {
+
+            }
+            case ADD_FAVOURITES -> {
+
+            }
+            case SHOW_FAVORITES -> {
+
+            }
+            default -> {
+                // send main menu message
+                SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+                SendResponse execute = bot.execute(sendMessage);
+                curUser.setBaseState(BaseState.MAIN_STATE.name());
+                curUser.setState(MainStates.MENYU_STATE.name());
+            }
+        }
+        userService.update(curUser);
+
+    }
 
 }

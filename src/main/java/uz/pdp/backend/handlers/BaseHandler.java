@@ -3,7 +3,9 @@ package uz.pdp.backend.handlers;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.Services.favorites.FavoritesService;
+import uz.pdp.backend.maker.MessageMaker;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.frontend.App;
@@ -14,7 +16,8 @@ public abstract class BaseHandler {
     protected TelegramBot bot;
     protected MyUser curUser;
     protected Update update;
-
+    protected ButtonCreator buttonCreator ;
+    protected MessageMaker messageMaker;
     protected UserService userService ;
     protected FavoritesService favoritesService;
 
@@ -22,6 +25,9 @@ public abstract class BaseHandler {
         this.bot = new TelegramBot(App.BOT_TOKEN);
         this.userService = new UserService();
         this.favoritesService = new FavoritesService();
+        this.buttonCreator = new ButtonCreator();
+        this.messageMaker = new MessageMaker();
+
     }
 
     public abstract void handle(Update update);
