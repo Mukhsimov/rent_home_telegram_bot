@@ -5,48 +5,48 @@ import uz.pdp.backend.statics.PathConstants;
 import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 import uz.pdp.backend.models.Favourite;
 
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesService implements BaseService<Favourite> {
     FileWriterAndLoader<Favourite> fileWriterAndLoader;
 
     public FavoritesService() {
-        this.fileWriterAndLoader = new FileWriterAndLoader<>();
+        this.fileWriterAndLoader = new FileWriterAndLoader<>(PathConstants.FAVORITES_PATH);
     }
 
     @Override
     public void create(Favourite favourite) {
-        Path path = Path.of(PathConstants.FAVORITES_PATH);
-        List<Favourite> favourites = fileWriterAndLoader.fileLoader(path);
-        int i=0;
-        for (Favourite favourite1 : favourites) {
-            if(favourite.getId().equals(favourite1.getId())){
-                i++;
-            }
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        if (favourites == null) {
+            favourites = new ArrayList<>();
         }
-        if(i==0) {
-            favourites.add(favourite);
-        }
-        fileWriterAndLoader.fileWrite(path, favourites);
+        favourites.add(favourite);
+        fileWriterAndLoader.fileWrite(favourites);
     }
 
     @Override
     public void update(Favourite favourite) {
-        Path usersPath = Path.of(PathConstants.FAVORITES_PATH);
-        List<Favourite> favourites = fileWriterAndLoader.fileLoader(usersPath);
-        int i=0;
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        int i = 0;
         for (Favourite favourite1 : favourites) {
-            if(favourite.getId().equals(favourite1.getId())){
+            if (favourite.getId().equals(favourite1.getId())) {
                 favourites.set(i, favourite);
             }
             i++;
         }
-        fileWriterAndLoader.fileWrite(usersPath, favourites);
+        fileWriterAndLoader.fileWrite(favourites);
     }
+
 
     @Override
     public Favourite get(long id) {
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        for (Favourite favourite : favourites) {
+            if (favourite.getId().equals(id)){
+                return favourite;
+            }
+        }
         return null;
     }
 
