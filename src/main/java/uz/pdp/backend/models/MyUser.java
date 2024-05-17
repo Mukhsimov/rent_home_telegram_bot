@@ -2,12 +2,12 @@ package uz.pdp.backend.models;
 
 import lombok.*;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MyUser {
-    private Long id;
+@Getter
+@Setter
+public class MyUser extends BaseModel{
     private String name;
     private String userName;
     private String baseState;

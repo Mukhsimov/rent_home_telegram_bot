@@ -1,19 +1,16 @@
 package uz.pdp.backend.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.xml.stream.Location;
+import java.util.Base64;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Setter
-public class Home {
-    private Long id;
+@Getter
+@Builder
+public class Home extends BaseModel {
     private double price;
     private double square;
     private int roomCount;

@@ -40,7 +40,7 @@ public class HomeService implements BaseService<Home> {
     @Override
     public Home get(long id) {
         for (Home home : loadAndWriter.fileLoader(Home.class)) {
-            if (home.getId().equals(id)) return home;
+            if (Objects.equals(home.getId(), id)) return home;
         }
         return null;
     }
@@ -48,6 +48,6 @@ public class HomeService implements BaseService<Home> {
     @Override
     public void delete(long id) {
         List<Home> homes = loadAndWriter.fileLoader(Home.class);
-        homes.removeIf(home -> home.getId().equals(id));
+        homes.removeIf(home -> Objects.equals(home.getId(), id));
     }
 }

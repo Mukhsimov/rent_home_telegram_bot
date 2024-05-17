@@ -12,8 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
-public class Photo {
-    private Long id;
+public class Photo extends BaseModel{
     private Long homeId;
     private String photoFieldId;
 
