@@ -1,17 +1,14 @@
-package uz.pdp.frontend.handlers;
+package uz.pdp.backend.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
-import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
+import uz.pdp.backend.Services.favorites.FavoritesService;
+import uz.pdp.backend.states.BaseState;
+import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.frontend.App;
-import uz.pdp.frontend.Services.userService.UserService;
-import uz.pdp.frontend.enums.states.BaseState;
-import uz.pdp.frontend.enums.states.childsStates.RegisterStates;
-import uz.pdp.frontend.models.MyUser;
-
-import java.nio.file.Path;
-import java.util.List;
+import uz.pdp.backend.Services.userService.UserService;
+import uz.pdp.backend.models.MyUser;
 
 public abstract class BaseHandler {
     protected TelegramBot bot;
@@ -19,10 +16,12 @@ public abstract class BaseHandler {
     protected Update update;
 
     protected UserService userService ;
+    protected FavoritesService favoritesService;
 
     public BaseHandler() {
         this.bot = new TelegramBot(App.BOT_TOKEN);
         this.userService = new UserService();
+        this.favoritesService = new FavoritesService();
     }
 
     public abstract void handle(Update update);
@@ -30,12 +29,10 @@ public abstract class BaseHandler {
     protected MyUser getOrCreateUser(User from) {
         MyUser user = userService.get(from.id());
         if (user==null) {
-            user = new MyUser(from.id(), from.firstName(), from.username(), BaseState.REGISTER_STATE.toString(), RegisterStates.REGISTER_STATE.toString(), null);
+            user = new MyUser(from.id(), from.firstName(), from.username(), BaseState.MAIN_STATE.toString(), MainStates.REGISTER_STATE.toString(), null);
             userService.create(user);
         }
 
         return user;
     }
-
-    // public abstract void execute();
 }

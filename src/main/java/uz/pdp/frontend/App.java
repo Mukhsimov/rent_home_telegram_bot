@@ -3,9 +3,7 @@ package uz.pdp.frontend;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
-import uz.pdp.frontend.enums.states.BaseState;
-import uz.pdp.frontend.manager.UpdateManager;
+import uz.pdp.backend.manager.UpdateManager;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

@@ -1,7 +1,7 @@
-package uz.pdp.frontend.enums.states;
+package uz.pdp.backend.states;
 
 public enum BaseState {
-    REGISTER_STATE,
+    MAIN_STATE,
     RENT_OUT_STATE,
     RENT_STATE;
 }

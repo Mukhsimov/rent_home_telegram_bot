@@ -1,6 +1,4 @@
-package uz.pdp.frontend.Services;
-
-import uz.pdp.frontend.models.MyUser;
+package uz.pdp.backend.Services;
 
 public interface BaseService<T> {
     // create, delete, update, get

@@ -1,4 +1,4 @@
-package uz.pdp.frontend.models;
+package uz.pdp.backend.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

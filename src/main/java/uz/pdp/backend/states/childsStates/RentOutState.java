@@ -1,7 +1,7 @@
-package uz.pdp.frontend.enums.states.childsStates;
+package uz.pdp.backend.states.childsStates;
 
 public enum RentOutState {
-    RENT_OUT,
+    RENT_OUT_HOME,
     ADD_HOME,
     SHOW_HOME,
     DELETE_HOME,

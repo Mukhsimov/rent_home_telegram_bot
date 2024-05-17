@@ -1,10 +1,6 @@
-package uz.pdp.frontend.models;
+package uz.pdp.backend.models;
 
-import com.pengrad.telegrambot.model.Contact;
 import lombok.*;
-import uz.pdp.frontend.enums.states.BaseState;
-
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

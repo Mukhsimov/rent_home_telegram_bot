@@ -1,15 +1,16 @@
-package uz.pdp.frontend.handlers;
+package uz.pdp.backend.handlers;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import uz.pdp.frontend.enums.states.BaseState;
-import uz.pdp.frontend.enums.states.childsStates.RentOutState;
-import uz.pdp.frontend.enums.states.childsStates.RentState;
-import uz.pdp.frontend.models.Favourite;
-import uz.pdp.frontend.utills.ButtonCreator;
+import uz.pdp.backend.Services.favorites.FavoritesService;
+import uz.pdp.backend.states.BaseState;
+import uz.pdp.backend.states.childsStates.MainStates;
+import uz.pdp.backend.states.childsStates.RentOutState;
+import uz.pdp.backend.states.childsStates.RentState;
+import uz.pdp.backend.Services.ButtonCreator;
 
 public class CallBackQueryHandler extends BaseHandler {
     @Override
@@ -25,10 +26,15 @@ public class CallBackQueryHandler extends BaseHandler {
                 curUser.setBaseState(BaseState.RENT_STATE.name());
                 rentHomeState();
             }
-            case "favorites" -> {
-                curUser.setState(RentState.FAVORITES.name());
+            case "addFavorites" -> {
+                curUser.setState(RentState.ADD_FAVOURITES.name());
                 curUser.setBaseState(BaseState.RENT_STATE.name());
-                favorites();
+                addFavorites();
+            }
+            case "showFavourites" ->{
+                curUser.setState(RentState.SHOW_FAVORITES.name());
+                curUser.setBaseState(BaseState.RENT_STATE.name());
+                showFavourites();
             }
             case "SearchHome" -> {
                 curUser.setState(RentState.SEARCH_HOME.name());
@@ -36,7 +42,7 @@ public class CallBackQueryHandler extends BaseHandler {
                 searchHome();
             }
             case "rentOut" -> {
-                curUser.setState(RentOutState.RENT_OUT.name());
+                curUser.setState(RentOutState.RENT_OUT_HOME.name());
                 curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
                 rentOutState();
             }
@@ -61,8 +67,22 @@ public class CallBackQueryHandler extends BaseHandler {
                 curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
                 deleteAccount();
             }
-
-
+            case "back" ->{
+                switch (curUser.getBaseState()){
+                    case "MAIN_STATE" ->{
+                        curUser.setState(MainStates.MENYU_STATE.name());
+                        //AAAAAAAAAAA
+                    }
+                    case "RENT_OUT_STATE" ->{
+                        curUser.setState(RentOutState.RENT_OUT_HOME.name());
+                        rentOutState();
+                    }
+                    case "RENT_STATE" ->{
+                        curUser.setState(RentState.RENT_HOME.name());
+                        rentHomeState();
+                    }
+                }
+            }
         }
     }
 
@@ -75,7 +95,7 @@ public class CallBackQueryHandler extends BaseHandler {
 
         String[][] names = {{"Search home", "Favorites"}};
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData, txt);
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
 
         SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
 
@@ -103,7 +123,7 @@ public class CallBackQueryHandler extends BaseHandler {
         String[][] names = {{"add home", "show homes"},
                 {"delete Home", "delete account"}};
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData, txt);
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
 
         SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
 
@@ -113,17 +133,26 @@ public class CallBackQueryHandler extends BaseHandler {
 
     }
 
-    private void favorites() {
+    private void addFavorites() {
+
     }
 
 
     private void searchHome() {
     }
 
+    private void showFavourites(){
+
+    }
+
     private void addHome() {
+        String info = "enter information about home\n1 price\n2 square\n3 room\nFOR EXAMPLE : 100_000. 15. 12\n note there MUST be dots between them";
+        SendMessage sendMessage = new SendMessage(curUser.getId(), info);
+        bot.execute(sendMessage);
     }
 
     private void showHomes() {
+
     }
 
     private void deleteHome() {

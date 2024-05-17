@@ -1,4 +1,4 @@
-package uz.pdp.frontend.models;
+package uz.pdp.backend.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 public class Home {
-    private UUID id;
+    private long id;
     private double price;
     private double square;
     private int roomCount;

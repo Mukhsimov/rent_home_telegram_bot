@@ -1,14 +1,12 @@
-package uz.pdp.frontend.Services.favorites;
+package uz.pdp.backend.Services.favorites;
 
+import uz.pdp.backend.Services.BaseService;
 import uz.pdp.backend.statics.PathConstants;
 import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
-import uz.pdp.frontend.Services.BaseService;
-import uz.pdp.frontend.models.Favourite;
-import uz.pdp.frontend.models.MyUser;
+import uz.pdp.backend.models.Favourite;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 
 public class FavoritesService implements BaseService<Favourite> {
     FileWriterAndLoader<Favourite> fileWriterAndLoader;
@@ -21,26 +19,30 @@ public class FavoritesService implements BaseService<Favourite> {
     public void create(Favourite favourite) {
         Path path = Path.of(PathConstants.FAVORITES_PATH);
         List<Favourite> favourites = fileWriterAndLoader.fileLoader(path);
-        boolean add = favourites.add(favourite);
-        if (add) {
-            return;
+        int i=0;
+        for (Favourite favourite1 : favourites) {
+            if(favourite.getId().equals(favourite1.getId())){
+                i++;
+            }
         }
-        throw new RuntimeException("Favorites is not added");
+        if(i==0) {
+            favourites.add(favourite);
+        }
+        fileWriterAndLoader.fileWrite(path, favourites);
     }
 
     @Override
     public void update(Favourite favourite) {
-   /*     Path usersPath = Path.of(PathConstants.FAVORITES_PATH);
+        Path usersPath = Path.of(PathConstants.FAVORITES_PATH);
         List<Favourite> favourites = fileWriterAndLoader.fileLoader(usersPath);
-
-
-        for (int i = 0; i < favourites.size(); i++) {
-            if (Objects.equals(favourites.get(i).getId(), myUser.getId())) {
-                users.set(i, myUser);
-                return;
+        int i=0;
+        for (Favourite favourite1 : favourites) {
+            if(favourite.getId().equals(favourite1.getId())){
+                favourites.set(i, favourite);
             }
+            i++;
         }
-        fileWriterAndLoader.fileWrite(usersPath, users);*/
+        fileWriterAndLoader.fileWrite(usersPath, favourites);
     }
 
     @Override

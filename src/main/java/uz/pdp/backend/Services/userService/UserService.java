@@ -1,12 +1,12 @@
-package uz.pdp.frontend.Services.userService;
+package uz.pdp.backend.Services.userService;
 
-import lombok.NonNull;
+import uz.pdp.backend.Services.BaseService;
 import uz.pdp.backend.statics.PathConstants;
 import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
-import uz.pdp.frontend.Services.BaseService;
-import uz.pdp.frontend.models.MyUser;
+import uz.pdp.backend.models.MyUser;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +20,10 @@ public class UserService implements BaseService<MyUser> {
 
     @Override
     public void create(MyUser myUser) {
-
+        Path userPath = Path.of(PathConstants.USERS_PATH);
+        List<MyUser> users = fileWriterAndLoader.fileLoader(userPath);
+        users.add(myUser);
+        fileWriterAndLoader.fileWrite(userPath, users);
     }
 
 

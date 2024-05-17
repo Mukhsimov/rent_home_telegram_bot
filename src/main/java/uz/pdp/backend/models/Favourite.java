@@ -1,4 +1,4 @@
-package uz.pdp.frontend.models;
+package uz.pdp.backend.models;
 
 import lombok.*;
 
@@ -9,6 +9,7 @@ import java.util.UUID;
 @Setter
 @Getter
 public class Favourite {
-    private UUID userId;
-    private UUID homeId;
+    private Long userId;
+    private Long homeId;
+    private UUID id;
 }

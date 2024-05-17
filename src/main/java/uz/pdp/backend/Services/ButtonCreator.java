@@ -1,4 +1,4 @@
-package uz.pdp.frontend.utills;
+package uz.pdp.backend.Services;
 
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
@@ -8,7 +8,7 @@ public class ButtonCreator {
 
 
     @NotNull
-    public InlineKeyboardMarkup inlineKeyboardMarkup(String[][] names, String[][] callbackData, String text) {
+    public InlineKeyboardMarkup inlineKeyboardMarkup(String[][] names, String[][] callbackData) {
 
         InlineKeyboardButton[][] result = new InlineKeyboardButton[2][2];
 

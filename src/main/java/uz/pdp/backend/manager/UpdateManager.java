@@ -1,10 +1,10 @@
-package uz.pdp.frontend.manager;
+package uz.pdp.backend.manager;
 
 import com.pengrad.telegrambot.model.Update;
-import uz.pdp.frontend.enums.states.BaseState;
-import uz.pdp.frontend.handlers.BaseHandler;
-import uz.pdp.frontend.handlers.CallBackQueryHandler;
-import uz.pdp.frontend.handlers.MessageHandler;
+import uz.pdp.backend.states.BaseState;
+import uz.pdp.backend.handlers.BaseHandler;
+import uz.pdp.backend.handlers.CallBackQueryHandler;
+import uz.pdp.backend.handlers.MessageHandler;
 
 public class UpdateManager {
     private final BaseHandler messageHandler;
