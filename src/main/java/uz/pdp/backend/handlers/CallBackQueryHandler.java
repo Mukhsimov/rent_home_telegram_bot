@@ -22,75 +22,23 @@ public class CallBackQueryHandler extends BaseHandler {
         curUser = getOrCreateUser(from);
         super.update = update;
         String data = callbackQuery.data();
-        switch (BaseState.valueOf(curUser.getBaseState())){
-            case MAIN_STATE -> mainState() ;
-            case RENT_STATE -> rentState();
-            case RENT_OUT_STATE -> mainState();
-        }
-        switch (data) {
 
+        switch (data){
             case "rentHome" -> {
                 curUser.setState(RentState.RENT_HOME.name());
                 curUser.setBaseState(BaseState.RENT_STATE.name());
                 rentHomeState();
             }
-            case "addFavorites" -> {
-                curUser.setState(RentState.ADD_FAVOURITES.name());
-                curUser.setBaseState(BaseState.RENT_STATE.name());
-                addFavorites();
-            }
-            case "showFavourites" ->{
-                curUser.setState(RentState.SHOW_FAVORITES.name());
-                curUser.setBaseState(BaseState.RENT_STATE.name());
-                showFavourites();
-            }
-            case "SearchHome" -> {
-                curUser.setState(RentState.SEARCH_HOME.name());
-                curUser.setBaseState(BaseState.RENT_STATE.name());
-                searchHome();
-            }
             case "rentOut" -> {
                 curUser.setState(RentOutState.RENT_OUT_HOME.name());
                 curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
-                rentOutState();
+                rentHomeOutState();
             }
-            case "addHome" -> {
-                curUser.setState(RentOutState.ADD_HOME.name());
-                curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
-                addHome();
-            }
-            case "showHomes" -> {
-                curUser.setState(RentOutState.SHOW_HOME.name());
-                curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
-                showHomes();
+        }
 
-            }
-            case "deleteHome" -> {
-                curUser.setState(RentOutState.DELETE_HOME.name());
-                curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
-                deleteHome();
-            }
-            case "deleteAccount" -> {
-                curUser.setState(RentOutState.DELETE_ACCOUNT.name());
-                curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
-                deleteAccount();
-            }
-            case "back" ->{
-                switch (curUser.getBaseState()){
-                    case "MAIN_STATE" ->{
-                        curUser.setState(MainStates.MENYU_STATE.name());
-                        //AAAAAAAAAAA
-                    }
-                    case "RENT_OUT_STATE" ->{
-                        curUser.setState(RentOutState.RENT_OUT_HOME.name());
-                        rentOutState();
-                    }
-                    case "RENT_STATE" ->{
-                        curUser.setState(RentState.RENT_HOME.name());
-                        rentHomeState();
-                    }
-                }
-            }
+        switch (BaseState.valueOf(curUser.getBaseState())){
+            case RENT_STATE -> rentState();
+            case RENT_OUT_STATE -> rentOutState();
         }
     }
 
@@ -99,10 +47,13 @@ public class CallBackQueryHandler extends BaseHandler {
         String data = callbackQuery.data();
         RentState rentState = RentState.valueOf(curUser.getState());
         switch (rentState ){
-            case SEARCH_HOME -> {
+            case RENT_HOME -> {
                 switch (data){
                     case "Search home"->{
-
+                        searchHome();
+                    }
+                    case "show favourites"->{
+                        showFavourites();
                     }
                     case "back"->{
                         rentBackTo(null);
@@ -112,66 +63,38 @@ public class CallBackQueryHandler extends BaseHandler {
         }
     }
 
-    private void mainState() {
+    /*
+    RENT_OUT_HOME,
+    ADD_HOME,
+    SHOW_HOME,
+    DELETE_HOME,
+    DELETE_ACCOUNT
+     */
+    private void rentOutState() {
         CallbackQuery callbackQuery = update.callbackQuery();
         String data = callbackQuery.data();
-        MainStates mainStates = MainStates.valueOf(curUser.getState());
-        switch (mainStates){
-            case MENYU_STATE -> {
+        RentOutState rentOutState = RentOutState.valueOf(curUser.getState());
+        switch (rentOutState){
+            case RENT_OUT_HOME -> {
                 switch (data){
-                    case "Search home"->{
-
+                    case "add home"->{
+                        addHome();
+                    }
+                    case "show home"->{
+                        showHomes();
+                    }
+                    case "deleate home"->{
+                        deleteHome();
+                    }
+                    case "deleate account"->{
+                        deleteAccount();
+                    }
+                    case "back"->{
+                        rentOutBack(null);
                     }
                 }
             }
         }
-    }
-
-    private void rentHomeState() {
-        ButtonCreator creator = new ButtonCreator();
-        // search homes by filter
-        // Favorites
-        String txt = "rent home";
-        String[][] callBackData = {{"SearchHome", "Favorites"}};
-
-        String[][] names = {{"Search home", "Favorites"}};
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
-
-        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
-
-        sendMessage.replyMarkup(inlineKeyboardMarkup);
-
-        bot.execute(sendMessage);
-
-    }
-
-    private void rentOutState() {
-        /*
-         * add home
-         * show homes
-         * delete home
-         * delete account
-         * */
-
-        ButtonCreator creator = new ButtonCreator();
-        // search homes by filter
-        // Favorites
-        String txt = "rent out home";
-        String[][] callBackData = {{"addHome", "showHomes"},
-                {"deleteHome", "deleteAccount"}};
-
-        String[][] names = {{"add home", "show homes"},
-                {"delete Home", "delete account"}};
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
-
-        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
-
-        sendMessage.replyMarkup(inlineKeyboardMarkup);
-
-        bot.execute(sendMessage);
-
     }
 
     private void addFavorites() {
@@ -202,22 +125,39 @@ public class CallBackQueryHandler extends BaseHandler {
     private void deleteAccount() {
 
     }
+    private void rentOutBack(RentOutState rentOutState){
+        switch (rentOutState){
+            case ADD_HOME -> {
+                addHome();
+            }
+            case SHOW_HOME -> {
+                showHomes();
+            }
+            case DELETE_HOME -> {
+                deleteHome();
+            }
+            case DELETE_ACCOUNT -> {
+                deleteAccount();
+            }
+            default -> {
+                SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+                SendResponse execute = bot.execute(sendMessage);
+                curUser.setBaseState(BaseState.MAIN_STATE.name());
+                curUser.setState(MainStates.MENYU_STATE.name());
+            }
+        }
+    }
 
     private void rentBackTo( RentState rentState){
 
         switch (rentState){
-            case RENT_HOME -> {
-                // send message rent home
+            case SEARCH_HOME -> {
+                searchHome();
                 curUser.setState(RentState.RENT_HOME.name());
             }
-            case SEARCH_HOME -> {
-
-            }
-            case ADD_FAVOURITES -> {
-
-            }
             case SHOW_FAVORITES -> {
-
+                showFavourites();
+                curUser.setState(RentState.SHOW_FAVORITES.name());
             }
             default -> {
                 // send main menu message
@@ -228,6 +168,51 @@ public class CallBackQueryHandler extends BaseHandler {
             }
         }
         userService.update(curUser);
+    }
+    private void rentHomeState() {
+        ButtonCreator creator = new ButtonCreator();
+        // search homes by filter
+        // Favorites
+        String txt = "rent home";
+        String[][] callBackData = {{"SearchHome", "Favorites"}};
+
+        String[][] names = {{"Search home", "Favorites"}};
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
+
+        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
+
+        sendMessage.replyMarkup(inlineKeyboardMarkup);
+
+        bot.execute(sendMessage);
+
+    }
+
+    private void rentHomeOutState() {
+        /*
+         * add home
+         * show homes
+         * delete home
+         * delete account
+         * */
+
+        ButtonCreator creator = new ButtonCreator();
+        // search homes by filter
+        // Favorites
+        String txt = "rent out home";
+        String[][] callBackData = {{"addHome", "showHomes"},
+                {"deleteHome", "deleteAccount"}};
+
+        String[][] names = {{"add home", "show homes"},
+                {"delete Home", "delete account"}};
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
+
+        SendMessage sendMessage = new SendMessage(curUser.getId(), txt);
+
+        sendMessage.replyMarkup(inlineKeyboardMarkup);
+
+        bot.execute(sendMessage);
 
     }
 
