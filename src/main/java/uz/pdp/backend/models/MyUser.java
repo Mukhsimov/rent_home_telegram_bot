@@ -3,12 +3,14 @@ package uz.pdp.backend.models;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import uz.pdp.backend.states.BaseState;
 
 import java.lang.reflect.Field;
 
 @Getter
 @Setter
+@ToString
 public class MyUser extends BaseModel {
     private String name;
     private String userName;

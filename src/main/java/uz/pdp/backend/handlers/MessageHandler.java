@@ -24,14 +24,13 @@ public class MessageHandler extends BaseHandler {
         String text = message.text();
         super.curUser = getOrCreateUser(from);
         System.out.println(curUser);
-        System.out.println(curUser);
         super.update = update;
         if(curUser.getContact()==null || curUser.getContact().isEmpty()){
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             register(curUser);
         }
-        if (text.equals("/start")) {
+        if (text.equals("/start") && (!curUser.getContact().isEmpty()) ) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();

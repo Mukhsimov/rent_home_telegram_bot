@@ -1,3 +1,10 @@
 [
-  null
+  {
+    "name": "Umar",
+    "userName": "Umarcoder",
+    "baseState": "MAIN_STATE",
+    "state": "REGISTER_STATE",
+    "contact": null,
+    "id": 539143963
+  }
 ]

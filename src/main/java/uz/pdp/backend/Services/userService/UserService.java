@@ -20,7 +20,7 @@ public class UserService implements BaseService<MyUser> {
     @Override
     public void create(MyUser myUser) {
         List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
-        if (users == null) {
+        if (users == null || users.isEmpty()) {
             users = new ArrayList<>();
         }
         users.add(myUser);
@@ -45,8 +45,9 @@ public class UserService implements BaseService<MyUser> {
     @Override
     public MyUser get(long id) {
         List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
+        System.out.println(users);
         if (users == null || users.isEmpty()) {
-            System.out.println("eeeee");
+            System.out.println("qqq");
             return null;
         }
         for (MyUser user : users) {
