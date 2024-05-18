@@ -6,8 +6,6 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import uz.pdp.backend.Services.favorites.FavoritesService;
-import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.states.childsStates.RentOutState;
@@ -221,7 +219,7 @@ public class CallBackQueryHandler extends BaseHandler {
             }
             default -> {
                 // send main menu message
-                SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+                SendMessage sendMessage = messageMaker.mainMenu(curUser);
                 SendResponse execute = bot.execute(sendMessage);
                 curUser.setBaseState(BaseState.MAIN_STATE.name());
                 curUser.setState(MainStates.MENYU_STATE.name());

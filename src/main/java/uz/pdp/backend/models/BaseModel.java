@@ -2,6 +2,7 @@ package uz.pdp.backend.models;
 
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public abstract class BaseModel {

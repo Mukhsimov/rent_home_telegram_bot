@@ -1,18 +1,13 @@
 package uz.pdp.backend.handlers;
 
-import com.pengrad.telegrambot.model.Contact;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
-import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.MyUser;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MessageHandler extends BaseHandler {
 
@@ -43,7 +38,7 @@ public class MessageHandler extends BaseHandler {
 
     private void mainMenyu() {
 
-        SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+        SendMessage sendMessage = messageMaker.mainMenu(curUser);
         bot.execute(sendMessage);
     }
 
