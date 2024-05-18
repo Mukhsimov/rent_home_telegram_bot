@@ -29,12 +29,12 @@ public class CallBackQueryHandler extends BaseHandler {
         String data = callbackQuery.data();
 
         switch (data) {
-            case "rentHome" -> {
+            case "RENT_HOME" -> {
                 curUser.setState(RentState.RENT_HOME.name());
                 curUser.setBaseState(BaseState.valueOf(BaseState.RENT_STATE.name()));
                 rentHomeState();
             }
-            case "rentOut" -> {
+            case "RENT_OUT_HOME" -> {
                 curUser.setState(RentOutState.RENT_OUT_HOME.name());
                 curUser.setBaseState(BaseState.valueOf(BaseState.RENT_OUT_STATE.name()));
                 rentHomeOutState();
@@ -54,13 +54,13 @@ public class CallBackQueryHandler extends BaseHandler {
         switch (rentState) {
             case RENT_HOME -> {
                 switch (data) {
-                    case "Search home" -> {
+                    case "SEARCH_HOME" -> {
                         searchHome();
                     }
-                    case "show favourites" -> {
+                    case "SHOW_FAVOURITES" -> {
                         showFavourites();
                     }
-                    case "back" -> {
+                    case "BACK" -> {
                         rentBackTo(null);
                     }
                 }
@@ -87,19 +87,19 @@ public class CallBackQueryHandler extends BaseHandler {
         switch (rentOutState) {
             case RENT_OUT_HOME -> {
                 switch (data) {
-                    case "add home" -> {
+                    case "ADD_HOME" -> {
                         addHome();
                     }
-                    case "show home" -> {
+                    case "SHOW_HOME" -> {
                         showHomes();
                     }
-                    case "deleate home" -> {
+                    case "DELEATE_HOME" -> {
                         deleteHome();
                     }
-                    case "deleate account" -> {
+                    case "DELEATE_ACCOUNT" -> {
                         deleteAccount();
                     }
-                    case "back" -> {
+                    case "BACK" -> {
                         rentOutBack(null);
                     }
                 }
@@ -153,7 +153,7 @@ public class CallBackQueryHandler extends BaseHandler {
 
     private void deleteHome() {
         showHomes();
-        String text = "choose home";
+        String text = "CHOOSE_HOME";
         curUser.setState(RentOutState.DELETE_HOME.name());
         SendMessage sendMessage = new SendMessage(curUser.getId(), text);
         bot.execute(sendMessage);

@@ -45,9 +45,7 @@ public class UserService implements BaseService<MyUser> {
     @Override
     public MyUser get(long id) {
         List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
-        System.out.println(users);
         if (users == null || users.isEmpty()) {
-            System.out.println("qqq");
             return null;
         }
         for (MyUser user : users) {

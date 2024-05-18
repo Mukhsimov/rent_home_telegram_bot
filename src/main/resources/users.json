@@ -4,15 +4,7 @@
     "userName": "Umarcoder",
     "baseState": "MAIN_STATE",
     "state": "REGISTER_STATE",
-    "contact": null,
+    "contact": "Contact{phone_number\u003d\u0027998935850480\u0027, first_name\u003d\u0027Umar\u0027, last_name\u003d\u0027null\u0027, user_id\u003d539143963, vcard\u003d\u0027null\u0027}",
     "id": 539143963
-  },
-  {
-    "name": "Xurshid",
-    "userName": "KhUrShId8",
-    "baseState": "MAIN_STATE",
-    "state": "REGISTER_STATE",
-    "contact": null,
-    "id": 670468748
   }
 ]

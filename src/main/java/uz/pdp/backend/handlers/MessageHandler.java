@@ -25,14 +25,12 @@ public class MessageHandler extends BaseHandler {
         String text = message.text();
         Contact contact = message.contact();
         super.curUser = getOrCreateUser(from);
-        System.out.println(curUser);
         super.update = update;
         if(contact!=null){
-            System.out.println(contact);
             curUser.setContact(contact.toString());
-            System.out.println("2222222222");
-            System.out.println(curUser);
-        } else if(curUser.getContact()==null || curUser.getContact().isEmpty()){
+            userService.update(curUser);
+            bot.execute(new SendMessage(from.id(), "you are registred successefully, type start to get started"));
+        } else if(curUser.getContact()==null){
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             register(curUser);
