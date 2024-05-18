@@ -41,23 +41,13 @@ public abstract class BaseHandler {
     protected MyUser getOrCreateUser(User from) {
         MyUser user = userService.get(from.id());
         if (user==null) {
-            user = MyUser.builder().name(from.firstName()).userName(from.username()).id(from.id()).baseState(BaseState.MAIN_STATE).state(MainStates.MENU_STATE.name()).build();
+            user = MyUser.builder().name(from.firstName()).userName(from.username()).id(from.id()).baseState(BaseState.MAIN_STATE).state(MainStates.REGISTER_STATE.name()).build();
             userService.create(user);
         }
 
         return user;
     }
 
-    protected void register(MyUser user) {
-        SendMessage sendMessage = new SendMessage(user.getId(), "enter contact");
-        KeyboardButton[][] button = {
-                {
-                        new KeyboardButton("Phone number").requestContact(true)
-                }
-        };
-        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(button).oneTimeKeyboard(true).resizeKeyboard(true);
-        sendMessage.replyMarkup(markup);
-        userService.update(user);
-        bot.execute(sendMessage);
-    }
+
+
 }

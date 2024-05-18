@@ -5,17 +5,13 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
-import uz.pdp.backend.Services.homeService.HomeService;
 import uz.pdp.backend.models.Favourite;
 import uz.pdp.backend.models.Home;
-import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.states.childsStates.RentOutState;
 import uz.pdp.backend.states.childsStates.RentState;
 import uz.pdp.backend.Services.ButtonCreator;
-import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 
 import java.util.List;
 
@@ -29,12 +25,12 @@ public class CallBackQueryHandler extends BaseHandler {
         String data = callbackQuery.data();
 
         switch (data) {
-            case "rentHome" -> {
+            case "RENT_HOME" -> {
                 curUser.setState(RentState.RENT_HOME.name());
                 curUser.setBaseState(BaseState.valueOf(BaseState.RENT_STATE.name()));
                 rentHomeState();
             }
-            case "rentOut" -> {
+            case "RENT_OUT_HOME" -> {
                 curUser.setState(RentOutState.RENT_OUT_HOME.name());
                 curUser.setBaseState(BaseState.valueOf(BaseState.RENT_OUT_STATE.name()));
                 rentHomeOutState();
@@ -54,13 +50,13 @@ public class CallBackQueryHandler extends BaseHandler {
         switch (rentState) {
             case RENT_HOME -> {
                 switch (data) {
-                    case "Search home" -> {
+                    case "SEARCH_HOME" -> {
                         searchHome();
                     }
-                    case "show favourites" -> {
+                    case "SHOW_FAVOURITES" -> {
                         showFavourites();
                     }
-                    case "back" -> {
+                    case "BACK" -> {
                         rentBackTo(null);
                     }
                 }
@@ -82,26 +78,25 @@ public class CallBackQueryHandler extends BaseHandler {
         if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            register(curUser);
-        }
-        switch (rentOutState) {
-            case RENT_OUT_HOME -> {
-                switch (data) {
-                    case "add home" -> {
-                        addHome();
-                    }
-                    case "show home" -> {
-                        showHomes();
-                    }
-                    case "deleate home" -> {
-                        deleteHome();
-                    }
-                    case "deleate account" -> {
-                        deleteAccount();
-                    }
-                    case "back" -> {
-                        rentOutBack(null);
-                    }
+            SendMessage register = messageMaker.register(curUser);
+            bot.execute(register);
+        } else
+        if (rentOutState == RentOutState.RENT_OUT_HOME) {
+            switch (data) {
+                case "ADD_HOME" -> {
+                    addHome();
+                }
+                case "SHOW_HOME" -> {
+                    showHomes();
+                }
+                case "DELETE_HOME" -> {
+                    deleteHome();
+                }
+                case "DELETE_ACCOUNT" -> {
+                    deleteAccount();
+                }
+                case "BACK" -> {
+                    rentOutBack(RentOutState.RENT_OUT_HOME);
                 }
             }
         }
@@ -109,17 +104,19 @@ public class CallBackQueryHandler extends BaseHandler {
 
     private void searchHome() {
         curUser.setState(RentState.SEARCH_HOME.name());
-        String[][] strings = new String[4][1];
-        strings = new String[][]{
+        String[][] strings = {
                 {"search by room count"},
                 {"search by square"},
                 {"search by price"},
                 {"search by location"}
         };
-        String[][] strings1 = {
-                {"search by room count", "search by square", "search by price", "search by location"}
+        String[][] callBack = {
+                {"SEARCH_BY_ROOM_COUNT"},
+                {"SEARCH_BY_SQUARE"},
+                {"SEARCH_BY_PRICE"},
+                {"SEARCH_BY_LOCATION"}
         };
-        InlineKeyboardMarkup markup = buttonCreator.inlineKeyboardMarkup(strings, strings1);
+        InlineKeyboardMarkup markup = buttonCreator.inlineKeyboardMarkup(strings, callBack);
         SendMessage sendMessage = new SendMessage(curUser.getId(), "choose menyu").replyMarkup(markup);
         bot.execute(sendMessage);
     }
@@ -213,10 +210,16 @@ public class CallBackQueryHandler extends BaseHandler {
         ButtonCreator creator = new ButtonCreator();
         // search homes by filter
         // Favorites
-        String txt = "rent home";
-        String[][] callBackData = {{"SearchHome", "Favorites"}};
+        String txt = "rent home menu";
+        String[][] callBackData = {
+                {"RENT_HOME", "SEARCH_HOME"},
+                {"ADD_FAVOURITES", "SHOW_FAVOURITES"}
+        };
 
-        String[][] names = {{"Search home", "Favorites"}};
+        String[][] names = {
+                {"Rent home", "Search home"},
+                {"Add favourites", "Show favourites"}
+        };
 
         InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
 
@@ -239,12 +242,15 @@ public class CallBackQueryHandler extends BaseHandler {
         ButtonCreator creator = new ButtonCreator();
         // search homes by filter
         // Favorites
-        String txt = "rent out home";
-        String[][] callBackData = {{"addHome", "showHomes"},
-                {"deleteHome", "deleteAccount"}};
+        String txt = "rent out home menu";
+        String[][] callBackData = {
+                {"ADD_HOME", "SHOW_HOME"},
+                {"DELETE_HOME", "DELETE_ACCOUNT"}};
 
-        String[][] names = {{"add home", "show homes"},
-                {"delete Home", "delete account"}};
+        String[][] names = {
+                {"add home", "show homes"},
+                {"delete Home", "delete account"}
+        };
 
         InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
 

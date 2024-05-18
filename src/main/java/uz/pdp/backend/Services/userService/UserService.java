@@ -45,17 +45,10 @@ public class UserService implements BaseService<MyUser> {
     @Override
     public MyUser get(long id) {
         List<MyUser> users = fileWriterAndLoader.fileLoader(MyUser.class);
-        System.out.println(users);
-        if (users == null || users.isEmpty()) {
-            System.out.println("qqq");
-            return null;
-        }
-        for (MyUser user : users) {
-            if (user.getId() == id) {
-                return user;
-            }
-        }
-        return null;
+        return users == null ? null : users.stream()
+                .filter(user -> user.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
 

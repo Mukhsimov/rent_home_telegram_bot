@@ -1,9 +1,6 @@
 package uz.pdp.backend.handlers;
 
-import com.pengrad.telegrambot.model.Contact;
-import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.Services.ButtonCreator;
@@ -18,25 +15,52 @@ public class MessageHandler extends BaseHandler {
 
     @Override
     public void handle(Update update) {
+
         Thread thread = Thread.currentThread();
+
         Message message = update.message();
         User from = message.from();
-        String text = message.text();
+
         super.curUser = getOrCreateUser(from);
-        System.out.println(curUser);
         super.update = update;
-        if(curUser.getContact()==null || curUser.getContact().isEmpty()){
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-            curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            register(curUser);
-        }
-        if (text.equals("/start") && (!curUser.getContact().isEmpty()) ) {
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-            curUser.setState(String.valueOf(MainStates.MENU_STATE));
+
+        Contact contact = message.contact();
+        Location location = message.location();
+        String text = message.text();
+
+        if (contact != null){
+            // set contact and send menu to head
+            String phoneNumber = contact.phoneNumber();
+            curUser.setContact(phoneNumber);
+            userService.update(curUser);
             mainMenyu();
-        }else {
+
+        } else if (location != null) {
+            // set home location
+        } else if (text != null) {
+            // menage txt
+
+            if (text.equals("/start")) {
+                String state = curUser.getState();
+
+                if (state.equals(MainStates.REGISTER_STATE.toString())){
+
+                        curUser.setBaseState(BaseState.MAIN_STATE);
+                        curUser.setState(String.valueOf(MainStates.MENU_STATE));
+                        userService.update(curUser);
+                        SendMessage register = messageMaker.register(curUser);
+                        bot.execute(register);
+                } else mainMenyu();
+            }
+
 
         }
+
+
+
+
+
+
         System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
     }
 
