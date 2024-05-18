@@ -31,7 +31,7 @@ public class MessageHandler extends BaseHandler {
         }
         if (text.equals("/start")) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-            curUser.setState(String.valueOf(MainStates.MENYU_STATE));
+            curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();
         }else {
 
@@ -43,7 +43,7 @@ public class MessageHandler extends BaseHandler {
 
     private void mainMenyu() {
 
-        SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+        SendMessage sendMessage = messageMaker.mainMenu(curUser);
         bot.execute(sendMessage);
     }
 

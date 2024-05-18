@@ -6,7 +6,6 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
-import uz.pdp.backend.Services.favorites.FavoritesService;
 import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
@@ -26,17 +25,17 @@ public class CallBackQueryHandler extends BaseHandler {
         switch (data){
             case "rentHome" -> {
                 curUser.setState(RentState.RENT_HOME.name());
-                curUser.setBaseState(BaseState.RENT_STATE.name());
+                curUser.setBaseState(BaseState.valueOf(BaseState.RENT_STATE.name()));
                 rentHomeState();
             }
             case "rentOut" -> {
                 curUser.setState(RentOutState.RENT_OUT_HOME.name());
-                curUser.setBaseState(BaseState.RENT_OUT_STATE.name());
+                curUser.setBaseState(BaseState.valueOf(BaseState.RENT_OUT_STATE.name()));
                 rentHomeOutState();
             }
         }
 
-        switch (BaseState.valueOf(curUser.getBaseState())){
+        switch (BaseState.valueOf(String.valueOf(curUser.getBaseState()))){
             case RENT_STATE -> rentState();
             case RENT_OUT_STATE -> rentOutState();
         }
@@ -140,10 +139,10 @@ public class CallBackQueryHandler extends BaseHandler {
                 deleteAccount();
             }
             default -> {
-                SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+                SendMessage sendMessage = messageMaker.mainMenu(curUser);
                 SendResponse execute = bot.execute(sendMessage);
-                curUser.setBaseState(BaseState.MAIN_STATE.name());
-                curUser.setState(MainStates.MENYU_STATE.name());
+                curUser.setBaseState(BaseState.valueOf(BaseState.MAIN_STATE.name()));
+                curUser.setState(MainStates.MENU_STATE.name());
             }
         }
     }
@@ -155,16 +154,16 @@ public class CallBackQueryHandler extends BaseHandler {
                 searchHome();
                 curUser.setState(RentState.RENT_HOME.name());
             }
-            case SHOW_FAVORITES -> {
+            case SHOW_FAVOURITES -> {
                 showFavourites();
-                curUser.setState(RentState.SHOW_FAVORITES.name());
+                curUser.setState(RentState.SHOW_FAVOURITES.name());
             }
             default -> {
                 // send main menu message
-                SendMessage sendMessage = messageMaker.mainMenyu(curUser);
+                SendMessage sendMessage = messageMaker.mainMenu(curUser);
                 SendResponse execute = bot.execute(sendMessage);
-                curUser.setBaseState(BaseState.MAIN_STATE.name());
-                curUser.setState(MainStates.MENYU_STATE.name());
+                curUser.setBaseState(BaseState.valueOf(BaseState.MAIN_STATE.name()));
+                curUser.setState(MainStates.MENU_STATE.name());
             }
         }
         userService.update(curUser);
