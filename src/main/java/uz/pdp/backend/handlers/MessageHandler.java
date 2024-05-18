@@ -13,6 +13,7 @@ import uz.pdp.backend.models.MyUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MessageHandler extends BaseHandler {
 
@@ -22,15 +23,21 @@ public class MessageHandler extends BaseHandler {
         Message message = update.message();
         User from = message.from();
         String text = message.text();
+        Contact contact = message.contact();
         super.curUser = getOrCreateUser(from);
         System.out.println(curUser);
         super.update = update;
-        if(curUser.getContact()==null || curUser.getContact().isEmpty()){
+        if(contact!=null){
+            System.out.println(contact);
+            curUser.setContact(contact.toString());
+            System.out.println("2222222222");
+            System.out.println(curUser);
+        } else if(curUser.getContact()==null || curUser.getContact().isEmpty()){
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             register(curUser);
         }
-        if (text.equals("/start") && (!curUser.getContact().isEmpty()) ) {
+        if( Objects.equals(text, "/start") && curUser.getContact()!=null ) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();
