@@ -35,7 +35,7 @@ public abstract class BaseHandler {
     protected MyUser getOrCreateUser(User from) {
         MyUser user = userService.get(from.id());
         if (user==null) {
-            user = new MyUser(from.id(), from.firstName(), from.username(), BaseState.MAIN_STATE, MainStates.REGISTER_STATE.toString(), null);
+            user = new MyUser(from.id(), from.firstName(), from.username(), BaseState.MAIN_STATE.toString(), MainStates.REGISTER_STATE.toString(), null);
             userService.create(user);
         }
 

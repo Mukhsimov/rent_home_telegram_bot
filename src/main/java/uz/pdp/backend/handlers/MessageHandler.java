@@ -1,72 +1,64 @@
 package uz.pdp.backend.handlers;
 
-import com.pengrad.telegrambot.model.*;
+import com.pengrad.telegrambot.model.Contact;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
+import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.MyUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageHandler extends BaseHandler {
 
     @Override
     public void handle(Update update) {
-
         Thread thread = Thread.currentThread();
-
         Message message = update.message();
         User from = message.from();
+        String text = message.text();
         super.curUser = getOrCreateUser(from);
         super.update = update;
-
-        Contact contact = message.contact();
-        PhotoSize[] photo = message.photo();
-        Location location = message.location();
-        String text = message.text();
-
-        if (contact != null) {
-            curUser.setContact(contact.phoneNumber());
-            userService.update(curUser);
-            mainMenu();
-        } else if (photo != null) {
-            // set photo for home
-        } else if (location != null) {
-            // set location for home
-        } else if (text != null) {
-            // menage text
-
-            if (text.equals("/start")) {
-
-                if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
-                    curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-                    curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-                    register(curUser);
-                } else {
-                    curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-                    curUser.setState(String.valueOf(MainStates.MENU_STATE));
-                    mainMenu();
-                }
-            }
-
+        if(curUser.getContact()==null || curUser.getContact().isEmpty()){
+            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
+            register(curUser);
+        }
+        if (text.equals("/start")) {
+            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setState(String.valueOf(MainStates.MENYU_STATE));
+            mainMenyu();
+        }else {
 
         }
-
-
         System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
     }
 
 
-    private void mainMenu() {
-        SendMessage sendMessage = messageMaker.mainMenu(curUser);
+
+    private void mainMenyu() {
+
+        SendMessage sendMessage = messageMaker.mainMenyu(curUser);
         bot.execute(sendMessage);
     }
 
     private void register(MyUser user) {
-        SendMessage sendMessage = messageMaker.register(user);
+        SendMessage sendMessage = new SendMessage(user.getId(), "enter contact");
+        KeyboardButton[][] button = {
+                {
+                    new KeyboardButton("Phone number").requestContact(true)
+                }
+        };
+        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(button).oneTimeKeyboard(true).resizeKeyboard(true);
+        sendMessage.replyMarkup(markup);
         userService.update(user);
         bot.execute(sendMessage);
     }
-
-
 }
 
 
