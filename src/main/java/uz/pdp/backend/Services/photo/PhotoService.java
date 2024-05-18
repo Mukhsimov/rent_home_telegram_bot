@@ -1,4 +1,4 @@
-package uz.pdp.backend.Services.userService.photo;
+package uz.pdp.backend.Services.photo;
 
 import uz.pdp.backend.Services.BaseService;
 import uz.pdp.backend.models.Photo;

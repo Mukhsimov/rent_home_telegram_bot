@@ -10,15 +10,24 @@ public class ButtonCreator {
     @NotNull
     public InlineKeyboardMarkup inlineKeyboardMarkup(String[][] names, String[][] callbackData) {
 
-        InlineKeyboardButton[][] result = new InlineKeyboardButton[2][2];
+        int x = names.length;
+        int y = names[0].length;
 
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                result[i][j] = new InlineKeyboardButton(names[i][j]).callbackData(callbackData[i][j]);
+        InlineKeyboardButton[][] buttons = new InlineKeyboardButton[x][y];
+
+
+
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                buttons[i][j] = new InlineKeyboardButton(names[i][j]).callbackData(callbackData[i][j]);
             }
         }
 
-        return new InlineKeyboardMarkup(result);
+        return new InlineKeyboardMarkup(buttons);
+
+
+
+
     }
 
 

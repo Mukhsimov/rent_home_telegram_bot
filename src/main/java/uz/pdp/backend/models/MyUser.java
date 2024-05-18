@@ -3,6 +3,7 @@ package uz.pdp.backend.models;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import uz.pdp.backend.states.BaseState;
 
 import java.lang.reflect.Field;
 
@@ -11,12 +12,12 @@ import java.lang.reflect.Field;
 public class MyUser extends BaseModel {
     private String name;
     private String userName;
-    private String baseState;
+    private BaseState baseState;
     private String state;
     private String contact;
 
     @Builder
-    public MyUser(Long id, String name, String userName, String baseState, String state, String contact) {
+    public MyUser(Long id, String name, String userName, BaseState baseState, String state, String contact) {
         setIdReflectively(id);
         this.name = name;
         this.userName = userName;

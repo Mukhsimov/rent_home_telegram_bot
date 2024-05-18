@@ -4,5 +4,5 @@ public enum RentState {
     RENT_HOME,
     SEARCH_HOME,
     ADD_FAVOURITES,
-    SHOW_FAVORITES
+    SHOW_FAVOURITES
 }
