@@ -3,8 +3,12 @@ package uz.pdp.backend.handlers;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.Services.favorites.FavoritesService;
+import uz.pdp.backend.Services.homeService.HomeService;
 import uz.pdp.backend.maker.MessageMaker;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
@@ -20,6 +24,7 @@ public abstract class BaseHandler {
     protected MessageMaker messageMaker;
     protected UserService userService ;
     protected FavoritesService favoritesService;
+    protected HomeService homeService;
 
     public BaseHandler() {
         this.bot = new TelegramBot(App.BOT_TOKEN);
@@ -27,6 +32,7 @@ public abstract class BaseHandler {
         this.favoritesService = new FavoritesService();
         this.buttonCreator = new ButtonCreator();
         this.messageMaker = new MessageMaker();
+        this.homeService = new HomeService();
 
     }
 
@@ -40,5 +46,18 @@ public abstract class BaseHandler {
         }
 
         return user;
+    }
+
+    protected void register(MyUser user) {
+        SendMessage sendMessage = new SendMessage(user.getId(), "enter contact");
+        KeyboardButton[][] button = {
+                {
+                        new KeyboardButton("Phone number").requestContact(true)
+                }
+        };
+        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(button).oneTimeKeyboard(true).resizeKeyboard(true);
+        sendMessage.replyMarkup(markup);
+        userService.update(user);
+        bot.execute(sendMessage);
     }
 }

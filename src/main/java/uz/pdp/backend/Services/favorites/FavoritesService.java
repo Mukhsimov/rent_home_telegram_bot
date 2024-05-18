@@ -59,6 +59,16 @@ public class FavoritesService implements BaseService<Favourite> {
                 return;
             }
         }
+    }
 
+    public List<Favourite> getByUser(Long userId) {
+        List<Favourite> favourites1 = new ArrayList<>();
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        for (Favourite favourite : favourites) {
+            if (favourite.getUserId().equals(userId)) {
+                favourites1.add(favourite);
+            }
+        }
+        return favourites1;
     }
 }

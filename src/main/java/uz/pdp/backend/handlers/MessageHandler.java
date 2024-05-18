@@ -47,18 +47,6 @@ public class MessageHandler extends BaseHandler {
         bot.execute(sendMessage);
     }
 
-    private void register(MyUser user) {
-        SendMessage sendMessage = new SendMessage(user.getId(), "enter contact");
-        KeyboardButton[][] button = {
-                {
-                    new KeyboardButton("Phone number").requestContact(true)
-                }
-        };
-        ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(button).oneTimeKeyboard(true).resizeKeyboard(true);
-        sendMessage.replyMarkup(markup);
-        userService.update(user);
-        bot.execute(sendMessage);
-    }
 }
 
 

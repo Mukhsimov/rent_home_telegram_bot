@@ -11,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class Home extends BaseModel {
+    private long userId;
     private double price;
     private double square;
     private int roomCount;
