@@ -50,7 +50,14 @@ public class PhotoService implements BaseService<Photo> {
         photos.removeIf((photo -> photo.getId().equals(id)));
     }
 
-    public void getPhotosByHomeID(Long homeID) {
-
+    public List<Photo> getPhotosByHomeID(Long homeID) {
+        List<Photo> photos = file.fileLoader(Photo.class);
+        List<Photo> result = new ArrayList<>();
+        for (Photo photo : photos) {
+            if (photo.getHomeId().equals(homeID)) {
+                result.add(photo);
+            }
+        }
+        return result;
     }
 }

@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "userId": 101,
+    "price": 250000.0,
+    "square": 120.5,
+    "roomCount": 3,
+    "location": {
+      "longitude": "1111112.3",
+      "latitude": "22222.2"
+
+    }
+  },
+  {
+    "id": 2,
+    "userId": 102,
+    "price": 320000.0,
+    "square": 150.0,
+    "roomCount": 4,
+    "location": {
+      "longitude": "33333.3",
+      "latitude": "44444.4"
+    }
+  },
+  {
+    "id": 3,
+    "userId": 103,
+    "price": 180000.0,
+    "square": 90.75,
+    "roomCount": 2,
+    "location": {
+      "longitude": "5555.5",
+      "latitude": "6666.6"
+    }
+  }
+]

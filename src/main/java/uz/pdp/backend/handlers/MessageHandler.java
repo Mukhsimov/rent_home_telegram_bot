@@ -2,13 +2,18 @@ package uz.pdp.backend.handlers;
 
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.*;
+import com.pengrad.telegrambot.request.SendMediaGroup;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import uz.pdp.backend.Services.ButtonCreator;
+import uz.pdp.backend.Services.photo.PhotoService;
 import uz.pdp.backend.filter.Filter;
+import uz.pdp.backend.models.Photo;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.Home;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageHandler extends BaseHandler {
@@ -32,14 +37,14 @@ public class MessageHandler extends BaseHandler {
 //            searchHome(text);
 //        }
 
-        switch (text){
-            case "/start"->{
+        switch (text) {
+            case "/start" -> {
                 start();
             }
         }
     }
 
-    private void start(){
+    private void start() {
         curUser.setState(String.valueOf(BaseState.MAIN_STATE));
         curUser.setState(String.valueOf(MainStates.MENU_STATE));
     }
@@ -49,7 +54,7 @@ public class MessageHandler extends BaseHandler {
         bot.execute(sendMessage);
     }
 
-    private void contactChecker(){
+    private void contactChecker() {
         Message message = update.message();
         Contact contact = message.contact();
         User from = message.from();
@@ -77,29 +82,52 @@ public class MessageHandler extends BaseHandler {
         if (option == 1) {
             filter = (home) -> home.getRoomCount() == value;
         } else if (option == 2) {
-            filter = (home) -> home.getSquare()<=value;
+            filter = (home) -> home.getSquare() <= value;
         } else if (option == 3) {
             filter = (home) -> home.getPrice() <= value;
-        } else{
+        } else {
             System.out.println("user entered incorrectly data");
             filter = (home) -> false;
         }
-
+        Long chatId = update.message().from().id();
         List<Home> homesByFilter = homeService.getHomesByFilter(filter);
 
-
         for (Home home : homesByFilter) {
-
+            String txt = homeToString(home);
+            List<Photo> photosByHomeID = photoService.getPhotosByHomeID(home.getId());
+            List<InputMedia> media = new ArrayList<>();
+            for (Photo photo : photosByHomeID) {
+                media.add(new InputMediaPhoto(photo.getPhotoFieldId()));
+            }
+            SendMediaGroup sendMediaGroup = new SendMediaGroup(chatId, media.toArray(new InputMedia[0]));
+            SendMessage sendMessage = new SendMessage(chatId, txt);
+            InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+            markup.addRow(new InlineKeyboardButton("Location").callbackData("LOCATION"));
+            sendMessage.replyMarkup(markup);
+            bot.execute(sendMessage);
+            bot.execute(sendMediaGroup);
+            photosByHomeID.clear();
+            media.clear();
         }
+
+
+
+
+
+
 
     }
 
-    private String homeToString(Home home){
+    private String homeToString(Home home) {
         double price = home.getPrice();
         double square = home.getSquare();
         int roomCount = home.getRoomCount();
-        photoService.getPhotosByHomeID(home.getId());
-        return null;
+
+        StringBuilder result = new StringBuilder();
+        result.append("price: ").append(price);
+        result.append("\nsquare: ").append(square);
+        result.append("\nroom count: ").append(roomCount);
+        return result.toString();
     }
 
 }
