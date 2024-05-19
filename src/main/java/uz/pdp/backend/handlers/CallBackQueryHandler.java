@@ -20,80 +20,49 @@ public class CallBackQueryHandler extends BaseHandler {
     public void handle(Update update) {
         CallbackQuery callbackQuery = update.callbackQuery();
         User from = callbackQuery.from();
-        curUser = getOrCreateUser(from);
+        super.curUser = getOrCreateUser(from);
         super.update = update;
         String data = callbackQuery.data();
-
-        switch (data) {
-            case "RENT_HOME" -> {
-                curUser.setState(RentState.RENT_HOME.name());
-                curUser.setBaseState(BaseState.valueOf(BaseState.RENT_STATE.name()));
-                rentHomeState();
-            }
-            case "RENT_OUT_HOME" -> {
-                curUser.setState(RentOutState.RENT_OUT_HOME.name());
-                curUser.setBaseState(BaseState.valueOf(BaseState.RENT_OUT_STATE.name()));
-                rentHomeOutState();
-            }
-            default -> {
-                if(curUser.getBaseState().name().equals("RENT_STATE")){
-                    rentState();
-                }else if(curUser.getBaseState().name().equals("RENT_OUT_STATE")){
-                    rentOutState();
-                }
-            }
-        }
-    }
-
-    private void rentState() {
-        CallbackQuery callbackQuery = update.callbackQuery();
-        String data = callbackQuery.data();
-        RentState rentState = RentState.valueOf(curUser.getState());
+        BaseState baseState = curUser.getBaseState();
         checkContact();
-        switch (rentState) {
-            case RENT_HOME -> {
-                switch (data) {
-                    case "SEARCH_HOME" -> {
-                        searchHome();
-                    }
-                    case "SHOW_FAVOURITES" -> {
-                        showFavourites();
-                    }
-                    case "BACK" -> {
-                        rentBackTo(null);
-                    }
+
+        if (baseState == BaseState.MAIN_STATE) {
+            messageMaker.mainMenu(curUser);
+        } else if (baseState == BaseState.RENT_STATE) {
+            switch (data) {
+                case "RENT_HOME" -> {
+                    rentHomeState();
+                }
+                case "SEARCH_HOME" -> {
+                    searchHome();
+                }
+                case "SHOW_FAVOURITES" -> {
+                    showFavourites();
+                }
+            }
+        } else if (baseState.equals(BaseState.RENT_OUT_STATE)){
+            switch (data){
+                case "RENT_OUT_HOME"->{
+                    rentHomeOutState();
+                }
+                case "ADD_HOME"->{
+                    addHome();
+                }
+                case "SHOW_HOME"->{
+                    showHomes();
+                }
+                case "DELETE_HOME"->{
+                    deleteHome();
+                }
+                case "DELETE_ACCOUNT"->{
+                    deleteAccount();
                 }
             }
         }
+
     }
 
-    private void rentOutState() {
-        CallbackQuery callbackQuery = update.callbackQuery();
-        String data = callbackQuery.data();
-        RentOutState rentOutState = RentOutState.valueOf(curUser.getState());
-        checkContact();
-        switch (rentOutState) {
-            case RENT_OUT_HOME -> {
-                switch (data) {
-                    case "ADD_HOME" -> {
-                        addHome();
-                    }
-                    case "SHOW_HOME" -> {
-                        showHomes();
-                    }
-                    case "DELEATE_HOME" -> {
-                        deleteHome();
-                    }
-                    case "DELEATE_ACCOUNT" -> {
-                        deleteAccount();
-                    }
-                    case "BACK" -> {
-                        rentOutBack(null);
-                    }
-                }
-            }
-        }
-    }
+
 
     private void searchHome() {
         curUser.setState(RentState.SEARCH_HOME.name());
@@ -217,19 +186,13 @@ public class CallBackQueryHandler extends BaseHandler {
     }
 
     private void rentHomeOutState() {
-        /*
-         * add home
-         * show homes
-         * delete home
-         * delete account
-         * */
 
         ButtonCreator creator = new ButtonCreator();
         // search homes by filter
         // Favorites
         String txt = "rent out home";
         String[][] callBackData = {{RentOutState.ADD_HOME.name(), RentOutState.SHOW_HOME.name()},
-                {RentOutState.DELETE_HOME.name(), RentOutState.DELETE_HOME.name()}};
+                {RentOutState.DELETE_HOME.name(), RentOutState.DELETE_ACCOUNT.name()}};
 
         String[][] names = {{"add home", "show homes"},
                 {"delete Home", "delete account"}};
@@ -243,7 +206,8 @@ public class CallBackQueryHandler extends BaseHandler {
         bot.execute(sendMessage);
 
     }
-    private void checkContact(){
+
+    private void checkContact() {
         if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));

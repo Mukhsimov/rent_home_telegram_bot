@@ -32,7 +32,9 @@ public class MessageHandler extends BaseHandler {
         if (contact != null) {
             curUser.setContact(contact.phoneNumber());
             userService.update(curUser);
-            bot.execute(new SendMessage(from.id(), "you are registred successefully, type start to get started"));
+            bot.execute(new SendMessage(from.id(), "you are registred successefully"));
+            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();
 
         } else if (curUser.getContact() == null) {
