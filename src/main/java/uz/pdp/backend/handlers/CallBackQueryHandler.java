@@ -247,7 +247,7 @@ public class CallBackQueryHandler extends BaseHandler {
         if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            register(curUser);
+            messageMaker.register(curUser);
         }
     }
 

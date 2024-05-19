@@ -1,9 +1,6 @@
 package uz.pdp.backend.handlers;
 
-import com.pengrad.telegrambot.model.Contact;
-import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.Services.ButtonCreator;
@@ -20,21 +17,29 @@ public class MessageHandler extends BaseHandler {
 
     @Override
     public void handle(Update update) {
+
         Thread thread = Thread.currentThread();
         Message message = update.message();
         User from = message.from();
+
         String text = message.text();
         Contact contact = message.contact();
+        Location location = message.location();
+
         super.curUser = getOrCreateUser(from);
         super.update = update;
+
         if (contact != null) {
-            curUser.setContact(contact.toString());
+            curUser.setContact(contact.phoneNumber());
             userService.update(curUser);
             bot.execute(new SendMessage(from.id(), "you are registred successefully, type start to get started"));
+            mainMenyu();
+
         } else if (curUser.getContact() == null) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            register(curUser);
+            SendMessage register = messageMaker.register(curUser);
+            bot.execute(register);
         }
         if (Objects.equals(text, "/start") && curUser.getContact() != null) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
