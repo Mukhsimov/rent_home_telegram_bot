@@ -60,6 +60,7 @@ public class UserService implements BaseService<MyUser> {
 
         boolean removed = users.removeIf((user) -> (Objects.equals(user.getId(), id)));
         if (removed) {
+            fileWriterAndLoader.fileWrite(users);
             return;
         }
         throw new RuntimeException(id + ": User not found");

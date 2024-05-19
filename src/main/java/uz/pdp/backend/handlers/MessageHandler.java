@@ -1,16 +1,15 @@
 package uz.pdp.backend.handlers;
 
 import com.pengrad.telegrambot.model.*;
+import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
+import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.filter.Filter;
-import uz.pdp.backend.models.Home;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
-
-import uz.pdp.backend.states.childsStates.RentState;
+import uz.pdp.backend.models.Home;
 
 import java.util.List;
-import java.util.Objects;
 
 public class MessageHandler extends BaseHandler {
 
@@ -27,7 +26,33 @@ public class MessageHandler extends BaseHandler {
 
         super.curUser = getOrCreateUser(from);
         super.update = update;
+        contactChecker();
+//        if (curUser.getBaseState().equals(BaseState.RENT_STATE) &&
+//                curUser.getState().equals(RentState.SEARCH_HOME.toString())){
+//            searchHome(text);
+//        }
 
+        switch (text){
+            case "/start"->{
+                start();
+            }
+        }
+    }
+
+    private void start(){
+        curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+        curUser.setState(String.valueOf(MainStates.MENU_STATE));
+    }
+
+    private void mainMenyu() {
+        SendMessage sendMessage = messageMaker.mainMenu(curUser);
+        bot.execute(sendMessage);
+    }
+
+    private void contactChecker(){
+        Message message = update.message();
+        Contact contact = message.contact();
+        User from = message.from();
         if (contact != null) {
             curUser.setContact(contact.phoneNumber());
             userService.update(curUser);
@@ -41,23 +66,7 @@ public class MessageHandler extends BaseHandler {
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             SendMessage register = messageMaker.register(curUser);
             bot.execute(register);
-        } else if (text != null) {
-
-            if (curUser.getBaseState().equals(BaseState.RENT_STATE) &&
-                    curUser.getState().equals(RentState.SEARCH_HOME.toString())){
-                searchHome(text);
-            }
-
-            if (Objects.equals(text, "/start")) {
-                curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-                curUser.setState(String.valueOf(MainStates.MENU_STATE));
-                mainMenyu();
-            }
-
-
         }
-
-        System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
     }
 
     private void searchHome(String text) {
@@ -91,13 +100,6 @@ public class MessageHandler extends BaseHandler {
         int roomCount = home.getRoomCount();
         photoService.getPhotosByHomeID(home.getId());
         return null;
-    }
-
-
-    private void mainMenyu() {
-
-        SendMessage sendMessage = messageMaker.mainMenu(curUser);
-        bot.execute(sendMessage);
     }
 
 }

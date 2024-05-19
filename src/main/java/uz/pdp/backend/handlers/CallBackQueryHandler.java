@@ -41,21 +41,21 @@ public class CallBackQueryHandler extends BaseHandler {
                     showFavourites();
                 }
             }
-        } else if (baseState.equals(BaseState.RENT_OUT_STATE)){
-            switch (data){
-                case "RENT_OUT_HOME"->{
+        } else if (baseState.equals(BaseState.RENT_OUT_STATE)) {
+            switch (data) {
+                case "RENT_OUT_HOME" -> {
                     rentHomeOutState();
                 }
-                case "ADD_HOME"->{
+                case "ADD_HOME" -> {
                     addHome();
                 }
-                case "SHOW_HOME"->{
+                case "SHOW_HOME" -> {
                     showHomes();
                 }
-                case "DELETE_HOME"->{
+                case "DELETE_HOME" -> {
                     deleteHome();
                 }
-                case "DELETE_ACCOUNT"->{
+                case "DELETE_ACCOUNT" -> {
                     deleteAccount();
                 }
             }
@@ -101,25 +101,31 @@ public class CallBackQueryHandler extends BaseHandler {
     }
 
     private void addHome() {
-        String info = "enter information about home\n1 price\n2 square\n3 room\nFOR EXAMPLE : 100_000. 15. 12\n note there MUST be dots between them";
+        String info = "enter information about home\n1 price\n2 square\n3 room\nfor example : 100_000. 15. 12\n note there MUST be dots between them";
         curUser.setState(RentOutState.ADD_HOME.name());
         SendMessage sendMessage = new SendMessage(curUser.getId(), info);
         bot.execute(sendMessage);
     }
 
-    private void showHomes() {
+    private List<Home> showHomes() {
         curUser.setState(RentOutState.SHOW_HOME.name());
         List<Home> homes = homeService.showMy(curUser.getId());
+        StringBuilder stringBuilder = new StringBuilder();
         int i = 0;
         for (Home home : homes) {
             i++;
-            System.out.println(i + " " + home);
+            stringBuilder.append(String.valueOf(i))
+                    .append(". ")
+                    .append(home.toString())
+                    .append("\n");
         }
+        bot.execute(new SendMessage(curUser.getId(), stringBuilder.toString()));
+        return homes;
     }
 
     private void deleteHome() {
         showHomes();
-        String text = "CHOOSE_HOME";
+        String text = "choose home \nfor example 1";
         curUser.setState(RentOutState.DELETE_HOME.name());
         SendMessage sendMessage = new SendMessage(curUser.getId(), text);
         bot.execute(sendMessage);
@@ -166,7 +172,8 @@ public class CallBackQueryHandler extends BaseHandler {
             }
             default -> {
                 // send main menu message
-                SendMessage sendMessage = messageMaker.mainMenu(curUser);
+                SendMessage sendMessage = messageMaker.
+                        mainMenu(curUser);
                 bot.execute(sendMessage);
                 curUser.setBaseState(BaseState.valueOf(BaseState.MAIN_STATE.name()));
                 curUser.setState(MainStates.MENU_STATE.name());
