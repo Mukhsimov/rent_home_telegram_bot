@@ -4,10 +4,13 @@ import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.Services.ButtonCreator;
+import uz.pdp.backend.filter.Filter;
+import uz.pdp.backend.models.Home;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.childsStates.RentOutState;
+import uz.pdp.backend.states.childsStates.RentState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +45,22 @@ public class MessageHandler extends BaseHandler {
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             SendMessage register = messageMaker.register(curUser);
             bot.execute(register);
-        }
-        if (Objects.equals(text, "/start") && curUser.getContact() != null) {
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-            curUser.setState(String.valueOf(MainStates.MENU_STATE));
-            mainMenyu();
-        } else if (curUser.getState().equals(RentOutState.ADD_HOME.name())) {
+        } else if (text != null) {
+
+            if (curUser.getBaseState().equals(BaseState.RENT_STATE) &&
+                    curUser.getState().equals(RentState.SEARCH_HOME.toString())){
+                searchHome(text);
+            }
+
+            if (Objects.equals(text, "/start")) {
+                curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+                curUser.setState(String.valueOf(MainStates.MENU_STATE));
+                mainMenyu();
+            }
+
 
         }
+
         System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
     }
 

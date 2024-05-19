@@ -5,6 +5,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
+import uz.pdp.backend.filter.Filter;
 import uz.pdp.backend.models.Favourite;
 import uz.pdp.backend.models.Home;
 import uz.pdp.backend.states.BaseState;
@@ -66,12 +67,25 @@ public class CallBackQueryHandler extends BaseHandler {
 
     private void searchHome() {
         curUser.setState(RentState.SEARCH_HOME.name());
-        String[][] strings = new String[4][1];
-        strings = new String[][]{
-                {"search by room count"},
-                {"search by square"},
-                {"search by price"},
-                {"search by location"}
+
+
+        String txt ="search home\n" +
+                "1. search by room count\n" +
+                "2. search by square\n" +
+                "3. search by price\n" +
+                "For example: 1. 4";
+
+        curUser.setState(RentState.SEARCH_HOME.toString());
+        curUser.setBaseState(BaseState.RENT_STATE);
+        userService.update(curUser);
+        SendMessage send = new SendMessage(curUser.getId(), txt);
+
+        bot.execute(send);
+    }
+
+    private void SearchHomeByFilter(int roomCount, double square, double price){
+        Filter<Home> filter = (home) ->{
+            return true;
         };
         String[][] strings1 = {
                 {"search by room count", "search by square", "search by price", "search by location"}
