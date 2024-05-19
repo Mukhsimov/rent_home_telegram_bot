@@ -94,15 +94,20 @@ public class CallBackQueryHandler extends BaseHandler {
     private void showFavourites() {
         List<Favourite> byUser = favoritesService.getByUser(curUser.getId());
         List<Home> homes = homeService.showFavourites(byUser);
+        StringBuilder stringBuilder = new StringBuilder();
         int i = 0;
         for (Home home : homes) {
             i++;
-            System.out.println(i + " " + home);
+            stringBuilder.append(String.valueOf(i))
+                    .append(". ")
+                    .append(home.toString())
+                    .append("\n");
         }
+        bot.execute(new SendMessage(curUser.getId(), stringBuilder.toString()) );
     }
 
     private void addHome() {
-        String info = "enter information about home\n1 price\n2 square\n3 room\nfor example : 100_000. 15. 12\n note there MUST be dots between them";
+        String info = "enter information about home\n1 price\n2 square\n3 room\nfor example : 100_000-15-12\n note there MUST be [-] between them";
         curUser.setState(RentOutState.ADD_HOME.name());
         SendMessage sendMessage = new SendMessage(curUser.getId(), info);
         bot.execute(sendMessage);

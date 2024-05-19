@@ -27,7 +27,6 @@ public abstract class BaseHandler {
     protected FavoritesService favoritesService;
     protected HomeService homeService;
     protected PhotoService photoService;
-
     public BaseHandler() {
         this.bot = new TelegramBot(App.BOT_TOKEN);
         this.userService = new UserService();
