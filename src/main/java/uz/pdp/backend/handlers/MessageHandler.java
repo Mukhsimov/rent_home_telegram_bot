@@ -10,6 +10,7 @@ import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.MyUser;
+import uz.pdp.backend.states.childsStates.RentOutState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,25 +27,24 @@ public class MessageHandler extends BaseHandler {
         Contact contact = message.contact();
         super.curUser = getOrCreateUser(from);
         super.update = update;
-        if(contact!=null){
+        if (contact != null) {
             curUser.setContact(contact.toString());
             userService.update(curUser);
             bot.execute(new SendMessage(from.id(), "you are registred successefully, type start to get started"));
-        } else if(curUser.getContact()==null){
+        } else if (curUser.getContact() == null) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             register(curUser);
         }
-        if( Objects.equals(text, "/start") && curUser.getContact()!=null ) {
+        if (Objects.equals(text, "/start") && curUser.getContact() != null) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();
-        }else {
+        } else if (curUser.getState().equals(RentOutState.ADD_HOME.name())) {
 
         }
         System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
     }
-
 
 
     private void mainMenyu() {

@@ -5,17 +5,13 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.SendResponse;
-import uz.pdp.backend.Services.homeService.HomeService;
 import uz.pdp.backend.models.Favourite;
 import uz.pdp.backend.models.Home;
-import uz.pdp.backend.models.MyUser;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.states.childsStates.RentOutState;
 import uz.pdp.backend.states.childsStates.RentState;
 import uz.pdp.backend.Services.ButtonCreator;
-import uz.pdp.file_writer_and_loader.FileWriterAndLoader;
 
 import java.util.List;
 
@@ -39,11 +35,13 @@ public class CallBackQueryHandler extends BaseHandler {
                 curUser.setBaseState(BaseState.valueOf(BaseState.RENT_OUT_STATE.name()));
                 rentHomeOutState();
             }
-        }
-
-        switch (BaseState.valueOf(String.valueOf(curUser.getBaseState()))) {
-            case RENT_STATE -> rentState();
-            case RENT_OUT_STATE -> rentOutState();
+            default -> {
+                if(curUser.getBaseState().name().equals("RENT_STATE")){
+                    rentState();
+                }else if(curUser.getBaseState().name().equals("RENT_OUT_STATE")){
+                    rentOutState();
+                }
+            }
         }
     }
 
@@ -51,6 +49,7 @@ public class CallBackQueryHandler extends BaseHandler {
         CallbackQuery callbackQuery = update.callbackQuery();
         String data = callbackQuery.data();
         RentState rentState = RentState.valueOf(curUser.getState());
+        checkContact();
         switch (rentState) {
             case RENT_HOME -> {
                 switch (data) {
@@ -68,22 +67,11 @@ public class CallBackQueryHandler extends BaseHandler {
         }
     }
 
-    /*
-    RENT_OUT_HOME,
-    ADD_HOME,
-    SHOW_HOME,
-    DELETE_HOME,
-    DELETE_ACCOUNT
-     */
     private void rentOutState() {
         CallbackQuery callbackQuery = update.callbackQuery();
         String data = callbackQuery.data();
         RentOutState rentOutState = RentOutState.valueOf(curUser.getState());
-        if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-            curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            register(curUser);
-        }
+        checkContact();
         switch (rentOutState) {
             case RENT_OUT_HOME -> {
                 switch (data) {
@@ -214,7 +202,7 @@ public class CallBackQueryHandler extends BaseHandler {
         // search homes by filter
         // Favorites
         String txt = "rent home";
-        String[][] callBackData = {{"SearchHome", "Favorites"}};
+        String[][] callBackData = {{RentState.SEARCH_HOME.name(), RentState.SHOW_FAVOURITES.name()}};
 
         String[][] names = {{"Search home", "Favorites"}};
 
@@ -240,8 +228,8 @@ public class CallBackQueryHandler extends BaseHandler {
         // search homes by filter
         // Favorites
         String txt = "rent out home";
-        String[][] callBackData = {{"addHome", "showHomes"},
-                {"deleteHome", "deleteAccount"}};
+        String[][] callBackData = {{RentOutState.ADD_HOME.name(), RentOutState.SHOW_HOME.name()},
+                {RentOutState.DELETE_HOME.name(), RentOutState.DELETE_HOME.name()}};
 
         String[][] names = {{"add home", "show homes"},
                 {"delete Home", "delete account"}};
@@ -254,6 +242,13 @@ public class CallBackQueryHandler extends BaseHandler {
 
         bot.execute(sendMessage);
 
+    }
+    private void checkContact(){
+        if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
+            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
+            register(curUser);
+        }
     }
 
 }
