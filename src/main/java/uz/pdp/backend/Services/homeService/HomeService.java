@@ -1,6 +1,7 @@
 package uz.pdp.backend.Services.homeService;
 
 import uz.pdp.backend.Services.BaseService;
+import uz.pdp.backend.filter.Filter;
 import uz.pdp.backend.models.Favourite;
 import uz.pdp.backend.models.Home;
 import uz.pdp.backend.statics.PathConstants;
@@ -83,5 +84,17 @@ public class HomeService implements BaseService<Home> {
     public void delete(long id) {
         List<Home> homes = loadAndWriter.fileLoader(Home.class);
         homes.removeIf(home -> Objects.equals(home.getId(), id));
+    }
+
+
+    public List<Home> getHomesByFilter(Filter<Home> filter) {
+        List<Home> homes = loadAndWriter.fileLoader(Home.class);
+        List<Home> result = new ArrayList<>();
+        for (Home home : homes) {
+            if (filter.check(home)){
+                result.add(home);
+            }
+        }
+        return result;
     }
 }
