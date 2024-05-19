@@ -9,6 +9,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.Services.favorites.FavoritesService;
 import uz.pdp.backend.Services.homeService.HomeService;
+import uz.pdp.backend.Services.photo.PhotoService;
 import uz.pdp.backend.maker.MessageMaker;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
@@ -25,6 +26,7 @@ public abstract class BaseHandler {
     protected UserService userService ;
     protected FavoritesService favoritesService;
     protected HomeService homeService;
+    protected PhotoService photoService;
 
     public BaseHandler() {
         this.bot = new TelegramBot(App.BOT_TOKEN);
@@ -33,7 +35,7 @@ public abstract class BaseHandler {
         this.buttonCreator = new ButtonCreator();
         this.messageMaker = new MessageMaker();
         this.homeService = new HomeService();
-
+        this.photoService = new PhotoService();
     }
 
     public abstract void handle(Update update);

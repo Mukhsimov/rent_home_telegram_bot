@@ -1,18 +1,14 @@
 package uz.pdp.backend.handlers;
 
 import com.pengrad.telegrambot.model.*;
-import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
-import uz.pdp.backend.Services.ButtonCreator;
 import uz.pdp.backend.filter.Filter;
 import uz.pdp.backend.models.Home;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
-import uz.pdp.backend.models.MyUser;
-import uz.pdp.backend.states.childsStates.RentOutState;
+
 import uz.pdp.backend.states.childsStates.RentState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +58,39 @@ public class MessageHandler extends BaseHandler {
         }
 
         System.out.println(thread.getName() + '\t' + from.firstName() + "\t " + "is_bot: " + from.isBot() + '\t' + "message: " + text);
+    }
+
+    private void searchHome(String text) {
+        String[] split = text.split("\\. ");
+        int option = Integer.parseInt(split[0]);
+        int value = Integer.parseInt(split[1]);
+        Filter<Home> filter;
+        if (option == 1) {
+            filter = (home) -> home.getRoomCount() == value;
+        } else if (option == 2) {
+            filter = (home) -> home.getSquare()<=value;
+        } else if (option == 3) {
+            filter = (home) -> home.getPrice() <= value;
+        } else{
+            System.out.println("user entered incorrectly data");
+            filter = (home) -> false;
+        }
+
+        List<Home> homesByFilter = homeService.getHomesByFilter(filter);
+
+
+        for (Home home : homesByFilter) {
+
+        }
+
+    }
+
+    private String homeToString(Home home){
+        double price = home.getPrice();
+        double square = home.getSquare();
+        int roomCount = home.getRoomCount();
+        photoService.getPhotosByHomeID(home.getId());
+        return null;
     }
 
 

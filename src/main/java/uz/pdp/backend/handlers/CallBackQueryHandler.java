@@ -87,12 +87,7 @@ public class CallBackQueryHandler extends BaseHandler {
         Filter<Home> filter = (home) ->{
             return true;
         };
-        String[][] strings1 = {
-                {"search by room count", "search by square", "search by price", "search by location"}
-        };
-        InlineKeyboardMarkup markup = buttonCreator.inlineKeyboardMarkup(strings, strings1);
-        SendMessage sendMessage = new SendMessage(curUser.getId(), "choose menyu").replyMarkup(markup);
-        bot.execute(sendMessage);
+        homeService.getHomesByFilter(filter);
     }
 
     private void showFavourites() {
