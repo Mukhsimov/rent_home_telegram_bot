@@ -83,7 +83,10 @@ public class HomeService implements BaseService<Home> {
     @Override
     public void delete(long id) {
         List<Home> homes = loadAndWriter.fileLoader(Home.class);
-        homes.removeIf(home -> Objects.equals(home.getId(), id));
+        boolean b = homes.removeIf(home -> Objects.equals(home.getId(), id));
+        if(b){
+            loadAndWriter.fileWrite(homes);
+        }
     }
 
 
@@ -96,5 +99,14 @@ public class HomeService implements BaseService<Home> {
             }
         }
         return result;
+    }
+
+    public void deleateAccount(long id){
+        List<Home> homes = loadAndWriter.fileLoader(Home.class);
+        for (Home home : homes) {
+            if(home.getUserId()==id){
+                delete(home.getId());
+            }
+        }
     }
 }

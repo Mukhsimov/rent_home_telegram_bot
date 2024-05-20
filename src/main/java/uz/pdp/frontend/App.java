@@ -41,21 +41,6 @@ public class App {
                         updateHandlerThreadLocal.get().manage(update);
 
 
-                        Long chatId = update.message().chat().id();
-                        List<InputMedia> media = new ArrayList<>();
-
-
-                        String txt = "testtttttttt";
-                        SendPhoto photo = new SendPhoto(chatId, "D:\\Folders\\Desktop\\themes\\dark_wallpaper_abstract\\479529-Justin-Maller-artwork-abstract-digital-digital-art.jpg");
-                        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                        markup.addRow(new InlineKeyboardButton("Location").callbackData("LOCATION"));
-                        photo.replyMarkup(markup);
-                        photo.caption(txt);
-                        //sendMessage.replyMarkup(markup);
-                        bot.execute(photo);
-                        // bot.execute(sendMediaGroup);
-
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

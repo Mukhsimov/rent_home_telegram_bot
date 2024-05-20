@@ -10,10 +10,10 @@ import java.util.UUID;
 @Setter
 @Getter
 @Builder
+@ToString
 public class Home extends BaseModel {
     private long userId;
     private double price;
     private double square;
     private int roomCount;
-    private Location location;
 }

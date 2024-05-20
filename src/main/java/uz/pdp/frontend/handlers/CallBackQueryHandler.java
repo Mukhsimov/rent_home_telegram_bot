@@ -1,7 +1,6 @@
-package uz.pdp.backend.handlers;
+package uz.pdp.frontend.handlers;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
-import com.pengrad.telegrambot.model.Location;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
@@ -25,14 +24,15 @@ public class CallBackQueryHandler extends BaseHandler {
         super.curUser = getOrCreateUser(from);
         super.update = update;
         String data = callbackQuery.data();
-        BaseState baseState = curUser.getBaseState();
         checkContact();
-
-        if (baseState == BaseState.MAIN_STATE) {
+        setState();
+        System.out.println("base"+curUser.getBaseState());
+        System.out.println("state"+curUser.getState());
+        if (curUser.getBaseState().equals(BaseState.MAIN_STATE)) {
             messageMaker.mainMenu(curUser);
-        } else if (baseState == BaseState.RENT_STATE) {
+        } else if (curUser.getBaseState().equals(BaseState.RENT_STATE)) {
             switch (data) {
-                case "RENT_HOME" -> {
+                case "RENT_HOME"->{
                     rentHomeState();
                 }
                 case "SEARCH_HOME" -> {
@@ -41,10 +41,16 @@ public class CallBackQueryHandler extends BaseHandler {
                 case "SHOW_FAVOURITES" -> {
                     showFavourites();
                 }
+                case "ADD_FAVOURITES"->{
+                    searchHome();
+                }
+                case "DELETE_FAVOURITE"->{
+                    deleteFavourites();
+                }
             }
-        } else if (baseState.equals(BaseState.RENT_OUT_STATE)) {
+        } else if (curUser.getBaseState().equals(BaseState.RENT_OUT_STATE)) {
             switch (data) {
-                case "RENT_OUT_HOME" -> {
+                case "RENT_OUT_HOME"->{
                     rentHomeOutState();
                 }
                 case "ADD_HOME" -> {
@@ -65,19 +71,13 @@ public class CallBackQueryHandler extends BaseHandler {
     }
 
 
-
     private void searchHome() {
-        curUser.setState(RentState.SEARCH_HOME.name());
-
-
         String txt ="search home\n" +
                 "1. search by room count\n" +
                 "2. search by square\n" +
                 "3. search by price\n" +
                 "For example: 1. 4";
 
-        curUser.setState(RentState.SEARCH_HOME.toString());
-        curUser.setBaseState(BaseState.RENT_STATE);
         userService.update(curUser);
         SendMessage send = new SendMessage(curUser.getId(), txt);
 
@@ -89,6 +89,21 @@ public class CallBackQueryHandler extends BaseHandler {
             return true;
         };
         homeService.getHomesByFilter(filter);
+    }
+
+    private void deleteFavourites(){
+        List<Favourite> byUser = favoritesService.getByUser(curUser.getId());
+        List<Home> homes = homeService.showFavourites(byUser);
+        int i=0;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Home home : homes) {
+            i++;
+            stringBuilder.append(i)
+                    .append(". ")
+                    .append(home);
+        }
+        stringBuilder.append("\nchoose home : for example 2");
+        bot.execute(new SendMessage(curUser.getId(), stringBuilder.toString()));
     }
 
     private void showFavourites() {
@@ -108,7 +123,6 @@ public class CallBackQueryHandler extends BaseHandler {
 
     private void addHome() {
         String info = "enter information about home\n1 price\n2 square\n3 room\nfor example : 100_000-15-12\n note there MUST be [-] between them";
-        curUser.setState(RentOutState.ADD_HOME.name());
         SendMessage sendMessage = new SendMessage(curUser.getId(), info);
         bot.execute(sendMessage);
     }
@@ -139,7 +153,10 @@ public class CallBackQueryHandler extends BaseHandler {
 
     private void deleteAccount() {
         userService.delete(curUser.getId());
+        homeService.deleateAccount(curUser.getId());
+        favoritesService.deleateAccount(curUser.getId());
         bot.execute(new SendMessage(curUser.getId(), "account deleated successefully nigga"));
+        curUser=null;
     }
 
     private void rentOutBack(RentOutState rentOutState) {
@@ -188,14 +205,60 @@ public class CallBackQueryHandler extends BaseHandler {
         userService.update(curUser);
     }
 
+    private void setState(){
+        String data = update.callbackQuery().data();
+        if(data.equals(RentOutState.RENT_OUT_HOME.name())){
+            curUser.setBaseState(BaseState.RENT_OUT_STATE);
+            curUser.setState(RentOutState.RENT_OUT_HOME.name());
+            userService.update(curUser);
+        }else if(data.equals(RentState.RENT_HOME.name())){
+            curUser.setBaseState(BaseState.RENT_STATE);
+            curUser.setState(RentState.RENT_HOME.name());
+            userService.update(curUser);
+        }else if(data.equals(RentState.SEARCH_HOME.name())){
+            curUser.setState(RentState.SEARCH_HOME.name());
+            curUser.setBaseState(BaseState.RENT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentState.SHOW_FAVOURITES.name())){
+            curUser.setState(RentState.SHOW_FAVOURITES.name());
+            curUser.setBaseState(BaseState.RENT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentState.ADD_FAVOURITES.name())){
+            curUser.setState(RentState.ADD_FAVOURITES.name());
+            curUser.setBaseState(BaseState.RENT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentState.DELETE_FAVOURITE.name())){
+            curUser.setState(RentState.DELETE_FAVOURITE.name());
+            curUser.setBaseState(BaseState.RENT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentOutState.ADD_HOME.name())){
+            curUser.setState(RentOutState.ADD_HOME.name());
+            curUser.setBaseState(BaseState.RENT_OUT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentOutState.SHOW_HOME.name())){
+            curUser.setState(RentOutState.SHOW_HOME.name());
+            curUser.setBaseState(BaseState.RENT_OUT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentOutState.DELETE_HOME.name())){
+            curUser.setState(RentOutState.DELETE_HOME.name());
+            curUser.setBaseState(BaseState.RENT_OUT_STATE);
+            userService.update(curUser);
+        }else if(data.equals(RentOutState.DELETE_ACCOUNT.name())){
+            curUser.setState(RentOutState.DELETE_ACCOUNT.name());
+            curUser.setBaseState(BaseState.RENT_OUT_STATE);
+            userService.update(curUser);
+        }
+    }
+
     private void rentHomeState() {
         ButtonCreator creator = new ButtonCreator();
         // search homes by filter
         // Favorites
         String txt = "rent home";
-        String[][] callBackData = {{RentState.SEARCH_HOME.name(), RentState.SHOW_FAVOURITES.name()}};
+        String[][] callBackData = {{RentState.SEARCH_HOME.name(), RentState.SHOW_FAVOURITES.name()}, {RentState.ADD_FAVOURITES.name(), RentState.DELETE_FAVOURITE.name()}};
 
-        String[][] names = {{"Search home", "Favorites"}};
+        String[][] names = { {"search home", "show favourites"},
+                {"add favourites", "deleate favourites"} };
 
         InlineKeyboardMarkup inlineKeyboardMarkup = creator.inlineKeyboardMarkup(names, callBackData);
 
@@ -233,7 +296,8 @@ public class CallBackQueryHandler extends BaseHandler {
         if (curUser.getContact() == null || curUser.getContact().isEmpty()) {
             curUser.setState(String.valueOf(BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
-            messageMaker.register(curUser);
+            SendMessage register = messageMaker.register(curUser);
+            bot.execute(register);
         }
     }
 

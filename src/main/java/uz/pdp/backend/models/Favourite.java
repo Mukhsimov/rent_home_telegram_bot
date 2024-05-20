@@ -8,6 +8,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Setter
 @Getter
+@Builder
 public class Favourite extends BaseModel{
     private Long userId;
     private Long homeId;

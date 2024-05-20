@@ -56,9 +56,11 @@ public class FavoritesService implements BaseService<Favourite> {
         for (Favourite favourite : favourites) {
             if (favourite.getId().equals(id)) {
                 favourites.remove(favourite);
+                fileWriterAndLoader.fileWrite(favourites);
                 return;
             }
         }
+        fileWriterAndLoader.fileWrite(favourites);
     }
 
     public List<Favourite> getByUser(Long userId) {
@@ -70,5 +72,15 @@ public class FavoritesService implements BaseService<Favourite> {
             }
         }
         return favourites1;
+    }
+    public void deleateAccount(long id){
+        List<Favourite> favourites = fileWriterAndLoader.fileLoader(Favourite.class);
+        if(favourites!=null) {
+            for (Favourite favourite : favourites) {
+                if (favourite.getUserId().equals(id)) {
+                    delete(favourite.getId());
+                }
+            }
+        }
     }
 }

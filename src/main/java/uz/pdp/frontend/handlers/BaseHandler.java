@@ -1,4 +1,4 @@
-package uz.pdp.backend.handlers;
+package uz.pdp.frontend.handlers;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
@@ -11,11 +11,15 @@ import uz.pdp.backend.Services.favorites.FavoritesService;
 import uz.pdp.backend.Services.homeService.HomeService;
 import uz.pdp.backend.Services.photo.PhotoService;
 import uz.pdp.backend.maker.MessageMaker;
+import uz.pdp.backend.models.Favourite;
+import uz.pdp.backend.models.Home;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.frontend.App;
 import uz.pdp.backend.Services.userService.UserService;
 import uz.pdp.backend.models.MyUser;
+
+import java.util.List;
 
 public abstract class BaseHandler {
     protected TelegramBot bot;

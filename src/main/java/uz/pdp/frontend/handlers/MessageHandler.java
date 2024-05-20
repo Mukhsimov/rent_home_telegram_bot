@@ -1,13 +1,15 @@
-package uz.pdp.backend.handlers;
+package uz.pdp.frontend.handlers;
 
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import uz.pdp.backend.filter.Filter;
+import uz.pdp.backend.models.Favourite;
 import uz.pdp.backend.states.BaseState;
 import uz.pdp.backend.states.childsStates.MainStates;
 import uz.pdp.backend.models.Home;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MessageHandler extends BaseHandler {
 
@@ -21,15 +23,19 @@ public class MessageHandler extends BaseHandler {
         String text = message.text();
         Contact contact = message.contact();
         Location location = message.location();
-        String state = curUser.getState();
 
         super.curUser = getOrCreateUser(from);
         super.update = update;
+        System.out.println(curUser);
+        if (Objects.equals(text, "/start") && curUser.getContact() != null) {
+            curUser.setState(MainStates.MENU_STATE.name());
+            curUser.setBaseState(BaseState.MAIN_STATE);
+            userService.update(curUser);
+            mainMenyu();
+        }
         contactChecker();
+        String state = curUser.getState();
         switch (state) {
-            case "MENU_STATE" -> {
-                start();
-            }
             case "ADD_HOME" -> {
                 addHome();
             }
@@ -37,10 +43,16 @@ public class MessageHandler extends BaseHandler {
                 deleateHome();
             }
             case "SEARCH_HOME" -> {
-                searchHome();
+                searchHome(text);
             }
-            case "SHOW_FAVOURITES" -> {
-                showFavourites();
+            case "ADD_FAVOURITES" -> {
+                addFavourites();
+            }
+            case "DELETE_FAVOURITE" -> {
+                deleteFavourite();
+            }
+            default -> {
+                System.out.println("default");
             }
         }
     }
@@ -48,8 +60,9 @@ public class MessageHandler extends BaseHandler {
     private void deleateHome() {
         String text = update.message().text();
         List<Home> homes = homeService.showMy(curUser.getId());
-        Home home = homes.get(Integer.parseInt(text));
+        Home home = homes.get(Integer.parseInt(text) - 1);
         homeService.delete(home.getId());
+        bot.execute(new SendMessage(curUser.getId(), "deleated successefully"));
     }
 
     private void addHome() {
@@ -70,11 +83,6 @@ public class MessageHandler extends BaseHandler {
         }
     }
 
-    private void start() {
-        curUser.setState(String.valueOf(BaseState.MAIN_STATE));
-        curUser.setState(String.valueOf(MainStates.MENU_STATE));
-    }
-
     private void mainMenyu() {
         SendMessage sendMessage = messageMaker.mainMenu(curUser);
         bot.execute(sendMessage);
@@ -88,12 +96,12 @@ public class MessageHandler extends BaseHandler {
             curUser.setContact(contact.phoneNumber());
             userService.update(curUser);
             bot.execute(new SendMessage(from.id(), "you are registred successefully"));
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setBaseState(BaseState.MAIN_STATE);
             curUser.setState(String.valueOf(MainStates.MENU_STATE));
             mainMenyu();
 
         } else if (curUser.getContact() == null) {
-            curUser.setState(String.valueOf(BaseState.MAIN_STATE));
+            curUser.setBaseState((BaseState.MAIN_STATE));
             curUser.setState(String.valueOf(MainStates.REGISTER_STATE));
             SendMessage register = messageMaker.register(curUser);
             bot.execute(register);
@@ -101,6 +109,39 @@ public class MessageHandler extends BaseHandler {
     }
 
     private void searchHome(String text) {
+        List<Home> homes = custom(text);
+        StringBuilder stringBuilder = new StringBuilder();
+        int i = 0;
+        for (Home home : homes) {
+            i++;
+            stringBuilder.append(i)
+                    .append(". ")
+                    .append(home.toString());
+        }
+        bot.execute(new SendMessage(curUser.getId(), stringBuilder.toString()));
+    }
+
+    private void deleteFavourite() {
+        String text = update.message().text();
+        List<Favourite> byUser = favoritesService.getByUser(curUser.getId());
+        Favourite favourite1 = byUser.get(Integer.parseInt(text)-1);
+        Favourite favourite = favoritesService.get(favourite1.getId());
+        favoritesService.delete(favourite.getId());
+        bot.execute(new SendMessage(curUser.getId(), "successefully deleted"));
+    }
+
+    private void addFavourites() {
+        String text = update.message().text();
+        List<Home> homes = custom(text);
+        for (Home home : homes) {
+            Favourite.FavouriteBuilder favouriteBuilder = Favourite.builder().userId(curUser.getId()).homeId(home.getId());
+            favoritesService.create(favouriteBuilder.build());
+        }
+        bot.execute(new SendMessage(curUser.getId(), "added successefully"));
+    }
+
+
+    private List<Home> custom(String text) {
         String[] split = text.split("\\. ");
         int option = Integer.parseInt(split[0]);
         int value = Integer.parseInt(split[1]);
@@ -112,16 +153,11 @@ public class MessageHandler extends BaseHandler {
         } else if (option == 3) {
             filter = (home) -> home.getPrice() <= value;
         } else {
-            System.out.println("user entered incorrectly data");
+            System.out.println("user entered incorrect data");
             filter = (home) -> false;
         }
 
-        List<Home> homesByFilter = homeService.getHomesByFilter(filter);
-
-
-        for (Home home : homesByFilter) {
-
-        }
+        return homeService.getHomesByFilter(filter);
 
     }
 
